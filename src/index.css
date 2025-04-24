@@ -1,8 +1,7 @@
-/* index.css */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-image: url('wallpaper1.png');
+  background-image: url('/wallpaper1.png'); /* Use an absolute path */
   background-size: cover;
   background-position: center;
   height: 100vh;
