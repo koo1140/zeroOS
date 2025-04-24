@@ -1,24 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// App.jsx
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import './index.css';
+import WelcomePopup from './WelcomePopup';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [showPopup, setShowPopup] = useState(true);
+  const [dimmed, setDimmed] = useState(true);
+
+  useEffect(() => {
+    if (!showPopup) {
+      const timer = setTimeout(() => setDimmed(false), 600);
+      return () => clearTimeout(timer);
+    } else {
+      setDimmed(true);
+    }
+  }, [showPopup]);
+
+  const handleClose = () => {
+    setShowPopup(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-    </>
-  )
+    <div className={`app ${dimmed ? 'dimmed' : ''}`}>
+      {showPopup && <WelcomePopup onClose={handleClose} />}
+    </div>
+  );
 }
 
-export default App
+export default App;
