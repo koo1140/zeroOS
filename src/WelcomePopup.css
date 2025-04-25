@@ -1,36 +1,108 @@
-/* WelcomePopup.css */
-.popup {
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700&display=swap');
+
+.popup-container {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(30, 30, 30, 0.95);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.popup {
+  position: relative;
+  background: rgba(30, 30, 30, 0.95); /* Dark overlay */
   border-radius: 30px;
   padding: 3rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  z-index: 1000;
+  z-index: 1; /* Content stays above the background */
   text-align: center;
   color: white;
+  width: 80vw;
+  max-width: 600px;
+  min-width: 300px;
+  font-family: 'Dosis', sans-serif;
+}
+
+.popup::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('image-mesh-gradient.png');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3; /* Transparency for the image */
+  border-radius: 30px; /* Match the popup corners */
+  z-index: -1; /* Background stays behind the content */
 }
 
 .popup h2 {
   margin-top: 0;
   font-size: 2.5rem;
+  font-weight: 600; /* medium-bold */
 }
 
-.popup p {
-  font-size: 1.5rem;
+.message-box {
+  background-color: rgba(255, 255, 255, 0.027);
+  width: 100%;
+  min-height: 100px;
+  max-height: 200px;
+  border-radius: 20px;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+
+/* scrollbar dark theme (Chrome, Edge) */
+.message-box::-webkit-scrollbar {
+  width: 8px;
+}
+.message-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+.message-box::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+/* scrollbar dark theme (Firefox) */
+.message-box {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.message-box p {
+  margin: 0;
+  font-size: 1.3rem;
+  color: #fff;
+  font-weight: 400;
+  text-align: left;
 }
 
 .popup button {
   margin-top: 2rem;
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-size: 1.25rem;
+  font-weight: 500;
+  font-family: "Dosis", sans-serif;
+  width: 20%;
 }
 
 .popup button:hover {

@@ -1,0 +1,113 @@
+/* Taskbar.css */
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700&display=swap');
+
+.taskbar {
+  position: fixed;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  
+  /* transparență uniformă */
+  background-color: rgba(0, 0, 0, 0.5);
+  
+  /* colțuri complet rotunjite */
+  border-radius: 9999px;
+  
+  /* pentru overlay-ul de noise */
+  overflow: hidden;
+  z-index: 1000;
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  font-family: 'Dosis', sans-serif;
+}
+
+.taskbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  
+  /* noise foarte subtil, 10% opacitate */
+  background-image: url("data:image/svg+xml;charset=UTF-8,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'>\
+    <filter id='noise'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='1' stitchTiles='stitch'/></filter>\
+    <rect width='100%' height='100%' filter='url(%23noise)' fill='white'/>\
+  </svg>");
+  background-repeat: repeat;
+  background-size: auto;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.taskbar.entered {
+  animation: drop-expand 0.6s forwards ease-out;
+}
+
+@keyframes drop-expand {
+  0% {
+    bottom: -60px;
+    width: 50px;
+    height: 50px;
+  }
+  50% {
+    bottom: 10px;
+    width: 50px;
+    height: 50px;
+  }
+  100% {
+    bottom: 10px;
+    width: 70vw; /* 70% din lățime */
+    height: 50px;
+  }
+}
+
+@media (max-width: 600px) {
+  .taskbar.entered {
+    animation-name: drop-expand-mobile;
+  }
+  @keyframes drop-expand-mobile {
+    0% {
+      bottom: -60px;
+      width: 50px;
+      height: 50px;
+    }
+    50% {
+      bottom: 10px;
+      width: 50px;
+      height: 50px;
+    }
+    100% {
+      bottom: 10px;
+      width: 90vw; /* 90% pe mobil */
+      height: 50px;
+    }
+  }
+}
+
+/* Style for the taskbar elements */
+.taskbar-element {
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+}
+
+.taskbar-element.clock {
+  animation-delay: 0.4s; /* Small delay for the clock's fade-in effect */
+  margin-left: auto; /* Ensure the clock stays on the right */
+}
+
+/* Fade-in animation for each element */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
