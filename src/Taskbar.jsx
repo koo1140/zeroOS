@@ -1,4 +1,7 @@
 // Taskbar.jsx
+import React, { useState, useEffect } from 'react';
+import './Taskbar.css';
+
 const formatTimeWithEmoji = (date) => {
   let hours = date.getHours();
   const minutes = date.getMinutes();
@@ -35,3 +38,6 @@ const Taskbar = () => {
     </div>
   );
 };
+
+
+export default Taskbar;
