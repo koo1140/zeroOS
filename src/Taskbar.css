@@ -50,6 +50,21 @@
   animation: drop-expand 0.6s forwards ease-out;
 }
 
+.taskbar-element.emoji-circle {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.2); /* cerc semi-transparent */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  animation-delay: 0.5s;
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+}
+
 @keyframes drop-expand {
   0% {
     bottom: -60px;
