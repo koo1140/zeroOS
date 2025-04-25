@@ -35,7 +35,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('image-mesh-gradient.png');
+  background-image: url('/image-mesh-gradient.png');
   background-size: cover;
   background-position: center;
   opacity: 0.3; /* Transparency for the image */
