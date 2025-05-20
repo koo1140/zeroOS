@@ -11,7 +11,7 @@ function WelcomePopup({ onClose }) {
           <p>Hope :)</p>
           <p>(just click ok)</p>
           <p>nothing around here ✨</p>
-          <p>nothing around here either ✨</p>
+          <p>you need to log in to access</p>
           <p>Hope :)</p>
           <p>Hope :)</p>
           <p>Hope :)</p>
