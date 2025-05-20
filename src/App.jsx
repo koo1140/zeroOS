@@ -11,6 +11,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(true);
   const [dimmed, setDimmed] = useState(true);
   const [showTaskbar, setShowTaskbar] = useState(false);
+  const { user } = useAuth(); // Get the user from the AuthContext
 
   useEffect(() => {
     if (!showPopup) {
@@ -26,11 +27,6 @@ function App() {
 
   const handleClose = () => {
     setShowPopup(false);
-  };
-
-  const ProtectedRoute = ({ children }) => {
-    const { user } = useAuth();
-    return user ? children : <Navigate to="/login" />;
   };
 
   const Home = () => {
@@ -59,7 +55,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Home />} />
+            <Route
+              path="/"
+              element={
+                user ? (
+                  <Home />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
           </Routes>
         </AuthProvider>
       </Router>
