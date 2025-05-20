@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { useAuth } from './useAuth';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(username, password);
+    const success = await login(username, password);
+    if (success) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
   };
 
   return (

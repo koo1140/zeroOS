@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  useLocation, // Import useLocation
+} from 'react-router-dom';
 import './App.css';
 import './index.css';
 import WelcomePopup from './WelcomePopup';
@@ -11,7 +17,8 @@ function App() {
   const [showPopup, setShowPopup] = useState(true);
   const [dimmed, setDimmed] = useState(true);
   const [showTaskbar, setShowTaskbar] = useState(false);
-  const { user } = useAuth(); // Get the user from the AuthContext
+  const { user } = useAuth();
+  const location = useLocation(); // Use useLocation hook
 
   useEffect(() => {
     if (!showPopup) {
@@ -22,6 +29,7 @@ function App() {
       return () => clearTimeout(timer);
     } else {
       setDimmed(true);
+      setShowTaskbar(false); // Ensure taskbar is hidden when popup is visible
     }
   }, [showPopup]);
 
@@ -40,36 +48,41 @@ function App() {
 
   return (
     <div className={`app ${dimmed ? 'dimmed' : ''}`}>
-      <Router>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="/protected"
-              element={
-                <ProtectedRoute>
-                  <div>
-                    <h1>Protected Page</h1>
-                    <p>You are logged in!</p>
-                  </div>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                user ? (
-                  <Home />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-          </Routes>
-        </AuthProvider>
-      </Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/protected"
+          element={
+            <ProtectedRoute>
+              <div>
+                <h1>Protected Page</h1>
+                <p>You are logged in!</p>
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={
+            user ? (
+              <Home />
+            ) : (
+              <Navigate to="/login" replace state={{ from: location }} />
+            )
+          }
+        />
+      </Routes>
     </div>
   );
 }
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  const location = useLocation();
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+  return children;
+};
 
 export default App;
