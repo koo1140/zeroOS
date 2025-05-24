@@ -35,7 +35,7 @@ function LoginPopup({ onClose, onSuccess }) {
                     placeholder="Password"
                     value={password}
                     onChange={handleInputChange}
-                    onKeyDown={handleKeyDown} // Add onKeyDown event handler
+                    onKeyDown={handleKeyDown}
                 />
                 {error && <div className="error-message">{error}</div>}
                 <button onClick={handleLogin}>verify</button>

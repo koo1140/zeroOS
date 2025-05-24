@@ -3,6 +3,13 @@ import React from 'react';
 import './WelcomePopup.css';
 
 function WelcomePopup({ onClose }) {
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onClose();
+    }
+  };
+
   return (
     <div className="popup-container">
       <div className="popup">
@@ -16,7 +23,7 @@ function WelcomePopup({ onClose }) {
           <p>Hope :)</p>
           <p>Hope :)</p>
         </div>
-        <button onClick={onClose}>ok</button>
+        <button onClick={onClose} onKeyDown={handleKeyDown}>ok</button>
       </div>
     </div>
   );
