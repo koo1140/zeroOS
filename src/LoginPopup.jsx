@@ -20,18 +20,25 @@ function LoginPopup({ onClose, onSuccess }) {
         }
     };
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleLogin();
+        }
+    };
+
     return (
         <div className="login-popup-container">
             <div className="login-popup">
-                <h2>Login</h2>
+                <h2>Auth</h2>
                 <input
                     type="password"
                     placeholder="Password"
                     value={password}
                     onChange={handleInputChange}
+                    onKeyDown={handleKeyDown} // Add onKeyDown event handler
                 />
                 {error && <div className="error-message">{error}</div>}
-                <button onClick={handleLogin}>Log In</button>
+                <button onClick={handleLogin}>verify</button>
             </div>
         </div>
     );
