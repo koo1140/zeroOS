@@ -11,20 +11,16 @@ export default function AppLoader({ onAppClick, apps }) {
       if (!res.ok) throw new Error('Failed to fetch app script');
       const code = await res.text();
 
-      // Try to extract the default export using eval (for demo/dev only)
-      let Component = null;
-      try {
-        // eslint-disable-next-line no-new-func
-        const fn = new Function('React', `
-          let exports = {};
-          let module = { exports };
-          ${code}
-          return exports.default || module.exports.default || NotesApp;
-        `);
-        Component = fn(React);
-      } catch (e) {
-        throw new Error('App code could not be evaluated: ' + e.message);
-      }
+      // Remove any import/export statements from the code
+      const sanitized = code
+        .replace(/import\s+.*from\s+.*;?/g, '')
+        .replace(/export\s+default\s+/g, 'return ')
+        .replace(/export\s+\{[^}]*\};?/g, '');
+
+      // Wrap in a function to provide React in scope
+      // eslint-disable-next-line no-new-func
+      const Component = new Function('React', `${sanitized}`)(React);
+
       if (!Component) throw new Error('No default export found in app');
       onAppClick({ ...app, Component });
     } catch (e) {
