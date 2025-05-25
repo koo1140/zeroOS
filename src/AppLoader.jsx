@@ -1,27 +1,39 @@
-// AppLoader.jsx
+// src/AppLoader.jsx
 import React, { useEffect, useState } from 'react';
 
-const importAllApps = () => {
-  const context = require.context('./apps', true, /App\.jsx$/);
-  return context.keys().map((key) => {
-    const appName = key.split('/')[1];
-    const Component = context(key).default;
-    const icon = require(`./apps/${appName}/icon.png`);
-    return { name: appName, Component, icon };
-  });
-};
+const apps = import.meta.glob('./apps/*/App.jsx');
+const icons = import.meta.globEager('./apps/*/icon.png');
 
 const AppLoader = ({ onAppClick }) => {
-  const [apps, setApps] = useState([]);
+  const [loadedApps, setLoadedApps] = useState([]);
 
   useEffect(() => {
-    const loadedApps = importAllApps();
-    setApps(loadedApps);
+    const loadApps = async () => {
+      const entries = await Promise.all(
+        Object.entries(apps).map(async ([path, resolver]) => {
+          const nameMatch = path.match(/\.\/apps\/([^/]+)\/App\.jsx$/);
+          if (!nameMatch) return null;
+          const name = nameMatch[1];
+          const module = await resolver();
+          const icon = icons[`./apps/${name}/icon.png`]?.default;
+
+          return {
+            name,
+            Component: module.default,
+            icon,
+          };
+        })
+      );
+
+      setLoadedApps(entries.filter(Boolean));
+    };
+
+    loadApps();
   }, []);
 
   return (
     <>
-      {apps.map((app) => (
+      {loadedApps.map((app) => (
         <div
           key={app.name}
           className="app-icon"
