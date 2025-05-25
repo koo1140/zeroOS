@@ -1,9 +1,8 @@
-// Taskbar.jsx
 import React, { useState, useEffect } from 'react';
 import './Taskbar.css';
 import AppLoader from './AppLoader';
 
-const Taskbar = () => {
+const Taskbar = ({ onAppClick }) => {
   const [entered, setEntered] = useState(false);
   const [time, setTime] = useState("");
   const [emoji, setEmoji] = useState("");
@@ -35,14 +34,12 @@ const Taskbar = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleAppClick = (app) => {
-    alert(`You clicked on ${app.name}`); // You can render app.Component here
-  };
-
   return (
     <div className={`taskbar ${entered ? 'entered' : ''}`}>
       <div className="taskbar-apps">
-        <AppLoader onAppClick={handleAppClick} />
+        <AppLoader
+          onAppClick={(app) => onAppClick(app.name, app.Component)}
+        />
       </div>
       <div className="taskbar-element clock">{time}</div>
       <div className="taskbar-element emoji-circle">{emoji}</div>
