@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './LoginPopup.css';
 import sha256 from 'crypto-js/sha256';
 import correctHash from './login/auth/verify';
@@ -6,6 +6,11 @@ import correctHash from './login/auth/verify';
 function LoginPopup({ onClose, onSuccess }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
 
     const handleInputChange = (event) => {
         setPassword(event.target.value);
@@ -31,6 +36,7 @@ function LoginPopup({ onClose, onSuccess }) {
             <div className="login-popup">
                 <h2>Auth</h2>
                 <input
+                    ref={inputRef}
                     type="password"
                     placeholder="Password"
                     value={password}
