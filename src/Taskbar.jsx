@@ -2,26 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './Taskbar.css';
 import AppLoader from './AppLoader';
 
-const Taskbar = ({ onAppClick }) => {
+export default function Taskbar({ onAppClick }) {
   const [entered, setEntered] = useState(false);
   const [time, setTime] = useState("");
   const [emoji, setEmoji] = useState("");
-
-  const updateTime = () => {
-    const date = new Date();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    const isAM = hours < 12;
-
-    const emoji = isAM ? "🌞" : "🌜";
-    hours = hours % 12 || 12;
-    const formatNumber = (num) => num.toString().padStart(2, '0');
-    const timeString = `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
-
-    setTime(timeString);
-    setEmoji(emoji);
-  };
 
   useEffect(() => {
     const id = setTimeout(() => setEntered(true), 50);
@@ -29,6 +13,18 @@ const Taskbar = ({ onAppClick }) => {
   }, []);
 
   useEffect(() => {
+    const updateTime = () => {
+      const d = new Date();
+      let h = d.getHours();
+      const m = d.getMinutes();
+      const s = d.getSeconds();
+      const isAM = h < 12;
+      const emoji = isAM ? "🌞" : "🌜";
+      h = h % 12 || 12;
+      const fmt = n => n.toString().padStart(2,'0');
+      setTime(`${fmt(h)}:${fmt(m)}:${fmt(s)}`);
+      setEmoji(emoji);
+    };
     updateTime();
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
@@ -37,14 +33,11 @@ const Taskbar = ({ onAppClick }) => {
   return (
     <div className={`taskbar ${entered ? 'entered' : ''}`}>
       <div className="taskbar-apps">
-        <AppLoader
-          onAppClick={(app) => onAppClick(app.name, app.Component)}
-        />
+        {/* forward the full app object */}
+        <AppLoader onAppClick={onAppClick} />
       </div>
       <div className="taskbar-element clock">{time}</div>
       <div className="taskbar-element emoji-circle">{emoji}</div>
     </div>
   );
-};
-
-export default Taskbar;
+}
