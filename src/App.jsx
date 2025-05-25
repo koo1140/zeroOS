@@ -38,7 +38,9 @@ function App() {
     <div className={`app ${dimmed ? 'dimmed' : ''}`}>
       {showPopup && <WelcomePopup onClose={handleClose} />}
       {showLogin && <LoginPopup onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />}
-      {showTaskbar && <Taskbar />}
+    + import Desktop from './Desktop';
+  …
+  {showTaskbar && <Desktop />}
     </div>
   );
 }
