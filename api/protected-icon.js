@@ -23,13 +23,15 @@ export default async function handler(req, res) {
       res.status(400).json({ error: 'Missing icon name' });
       return;
     }
-    const iconPath = path.join(process.cwd(), 'apps', name, 'icon.png');
+    // Ensure the path is correct and safe
+    const safeName = String(name).replace(/[^a-zA-Z0-9_-]/g, '');
+    const iconPath = path.join(process.cwd(), 'apps', safeName, 'icon.png');
     try {
       const icon = await fs.readFile(iconPath);
       res.setHeader('Content-Type', 'image/png');
       res.status(200).send(icon);
-    } catch {
-      res.status(404).json({ error: 'Icon not found' });
+    } catch (e) {
+      res.status(404).json({ error: 'Icon not found', details: e.message });
     }
   } catch {
     res.status(401).json({ error: 'Unauthorized' });

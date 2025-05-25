@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Always include the apps directory and its contents
+!apps/
+!apps/**
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
