@@ -3,35 +3,30 @@ import React from 'react';
 import { Rnd } from 'react-rnd';
 
 export default function Window({
-  x,
-  y,
-  width,
-  height,
-  zIndex,
-  title,
-  isMaximized,
-  onFocus,
-  onClose,
-  onMinimize,
-  onMaximize,
-  onDragStop,
-  onResizeStop,
-  children,
+  x, y, width, height, zIndex,
+  title, isMaximized,
+  minWidth, minHeight,
+  onFocus, onClose, onMaximize,
+  onDragStop, onResizeStop,
+  children
 }) {
-  const handleMouseDown = () => onFocus();
+  const startDrag = () => onFocus();
 
   return (
     <Rnd
       size={{ width, height }}
       position={{ x, y }}
-      onDragStart={handleMouseDown}
-      onResizeStart={handleMouseDown}
+      bounds="parent"
+      minWidth={minWidth}
+      minHeight={minHeight}
+      onDragStart={startDrag}
+      onResizeStart={startDrag}
       onDragStop={(e, d) => {
-        handleMouseDown();
+        startDrag();
         onDragStop(d.x, d.y);
       }}
       onResizeStop={(e, dir, ref, delta, pos) => {
-        handleMouseDown();
+        startDrag();
         onResizeStop(
           ref.offsetWidth,
           ref.offsetHeight,
@@ -40,18 +35,26 @@ export default function Window({
         );
       }}
       style={{ zIndex }}
-      bounds="parent"
       disableDragging={isMaximized}
       enableResizing={!isMaximized}
       dragHandleClassName="window-header"
       className="window"
     >
-      <div className="window-header" onMouseDown={handleMouseDown}>
+      <div className="window-header" onMouseDown={startDrag}>
         <span className="title">{title}</span>
         <div className="controls">
-          <button onClick={onMinimize}>–</button>
-          <button onClick={onMaximize}>□</button>
-          <button onClick={onClose}>✕</button>
+          <button
+            className="toggle-btn"
+            onClick={onMaximize}
+          >
+            {isMaximized ? '–' : '□'}
+          </button>
+          <button
+            className="close-btn"
+            onClick={onClose}
+          >
+            ✕
+          </button>
         </div>
       </div>
       <div className="window-body">{children}</div>

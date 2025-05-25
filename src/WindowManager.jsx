@@ -4,33 +4,25 @@ import Window from './Window';
 
 export default function WindowManager({
   windows,
-  onClose,
-  onMinimize,
-  onMaximize,
-  onFocus,
-  onDragStop,
-  onResizeStop,
+  onClose, onMinimize, onMaximize, onFocus,
+  onDragStop, onResizeStop,
 }) {
   return (
     <>
-      {windows
-        .filter(w => !w.isMinimized)
-        .map(win => (
-          <Window
-            key={win.id}
-            {...win}
-            onFocus={() => onFocus(win.id)}
-            onClose={() => onClose(win.id)}
-            onMinimize={() => onMinimize(win.id)}
-            onMaximize={() => onMaximize(win.id)}
-            onDragStop={(x, y) => onDragStop(win.id, x, y)}
-            onResizeStop={(w, h, x, y) =>
-              onResizeStop(win.id, w, h, x, y)
-            }
-          >
-            <win.Component />
-          </Window>
-        ))}
+      {windows.filter(w=>!w.isMinimized).map(w => (
+        <Window
+          key={w.id}
+          {...w}
+          onFocus={() => onFocus(w.id)}
+          onClose={() => onClose(w.id)}
+          onMinimize={() => onMinimize(w.id)}
+          onMaximize={() => onMaximize(w.id)}
+          onDragStop={(x,y) => onDragStop(w.id,x,y)}
+          onResizeStop={(width,height,x,y) => onResizeStop(w.id,width,height,x,y)}
+        >
+          <w.Component />
+        </Window>
+      ))}
     </>
   );
 }
