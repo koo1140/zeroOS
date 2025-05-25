@@ -1,36 +1,162 @@
-.taskbar-scroll-container {
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700&display=swap');
+
+/* Main taskbar container */
+.taskbar {
+  position: fixed;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 9999px;
+  overflow: hidden;
+  z-index: 1000;
+
   display: flex;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  padding: 0 10px;
-  gap: 10px;
-  flex-grow: 1;
   align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+
+  font-family: 'Dosis', sans-serif;
+  transition: width 0.4s ease;
+  white-space: nowrap;
 }
 
-/* Hide scrollbar */
-.taskbar-scroll-container::-webkit-scrollbar {
+/* Noise overlay */
+.taskbar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml;charset=UTF-8,\
+  <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20'>\
+    <filter id='noise'><feTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='1' stitchTiles='stitch'/></filter>\
+    <rect width='100%' height='100%' filter='url(%23noise)' fill='white'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Animate drop and expand */
+.taskbar.entered {
+  animation: drop-expand 0.6s forwards ease-out;
+}
+
+@keyframes drop-expand {
+  0% {
+    bottom: -60px;
+    width: 50px;
+    height: 50px;
+  }
+  50% {
+    bottom: 10px;
+    width: 50px;
+    height: 50px;
+  }
+  100% {
+    bottom: 10px;
+    width: 70vw;
+    height: 50px;
+  }
+}
+
+@media (max-width: 600px) {
+  .taskbar.entered {
+    animation-name: drop-expand-mobile;
+  }
+
+  @keyframes drop-expand-mobile {
+    0% {
+      bottom: -60px;
+      width: 50px;
+      height: 50px;
+    }
+    50% {
+      bottom: 10px;
+      width: 50px;
+      height: 50px;
+    }
+    100% {
+      bottom: 10px;
+      width: 90vw;
+      height: 50px;
+    }
+  }
+}
+
+/* Clock element */
+.taskbar-element.clock {
+  margin-left: auto;
+  color: white;
+  font-weight: 500;
+  animation: fade-in 0.5s forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+/* Emoji bubble */
+.taskbar-element.emoji-circle {
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  opacity: 0;
+  animation: fade-in 0.5s forwards;
+  animation-delay: 0.5s;
+}
+
+/* App icon container (scrollable) */
+.taskbar-apps {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 8px;
+  padding: 0 8px;
+  flex-grow: 1;
+  max-width: 100%;
+}
+
+/* Hide scrollbars for WebKit, Firefox */
+.taskbar-apps::-webkit-scrollbar {
   display: none;
 }
-.taskbar-scroll-container {
+.taskbar-apps {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
+/* App icon */
 .app-icon {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-.app-icon img {
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  object-fit: cover;
+  transition: transform 0.2s ease;
 }
 .app-icon:hover {
   transform: scale(1.1);
+}
+.app-icon img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Fade-in animation */
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }

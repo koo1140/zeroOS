@@ -41,7 +41,7 @@ const Taskbar = () => {
 
   return (
     <div className={`taskbar ${entered ? 'entered' : ''}`}>
-      <div className="taskbar-scroll-container">
+      <div className="taskbar-apps">
         <AppLoader onAppClick={handleAppClick} />
       </div>
       <div className="taskbar-element clock">{time}</div>
