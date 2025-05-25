@@ -1,19 +1,8 @@
 import jwt from 'jsonwebtoken';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const JWT_SECRET = process.env.ZEROOS_JWT_SECRET || 'change_this_secret';
-
-const appRegistry = [
-  {
-    name: 'Notes',
-    icon: '/api/protected-icon?name=Notes',
-    script: '/api/protected-app?name=Notes&file=App.js',
-    defaultWidth: 600,
-    defaultHeight: 450,
-    minWidth: 500,
-    minHeight: 400,
-  },
-  // ...add more apps here
-];
 
 function getTokenFromCookie(req) {
   const cookie = req.headers.cookie || '';
@@ -22,16 +11,26 @@ function getTokenFromCookie(req) {
 }
 
 export default async function handler(req, res) {
-  // Extract JWT from cookie
   const token = getTokenFromCookie(req);
   if (!token) {
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
   try {
-    // Verify JWT
     jwt.verify(token, JWT_SECRET);
-    res.status(200).json(appRegistry);
+    const { name } = req.query;
+    if (!name) {
+      res.status(400).json({ error: 'Missing icon name' });
+      return;
+    }
+    const iconPath = path.join(process.cwd(), 'apps', name, 'icon.png');
+    try {
+      const icon = await fs.readFile(iconPath);
+      res.setHeader('Content-Type', 'image/png');
+      res.status(200).send(icon);
+    } catch {
+      res.status(404).json({ error: 'Icon not found' });
+    }
   } catch {
     res.status(401).json({ error: 'Unauthorized' });
   }
