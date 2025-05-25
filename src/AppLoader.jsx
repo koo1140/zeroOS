@@ -1,39 +1,21 @@
 // src/AppLoader.jsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import NotesApp from './apps/Notes/App.jsx';
+import notesIcon from './apps/Notes/icon.png';
 
-const apps = import.meta.glob('./apps/*/App.jsx');
-const icons = import.meta.globEager('./apps/*/icon.png');
+const appRegistry = [
+  {
+    name: 'Notes',
+    Component: NotesApp,
+    icon: notesIcon,
+  },
+  // Add more apps here manually
+];
 
 const AppLoader = ({ onAppClick }) => {
-  const [loadedApps, setLoadedApps] = useState([]);
-
-  useEffect(() => {
-    const loadApps = async () => {
-      const entries = await Promise.all(
-        Object.entries(apps).map(async ([path, resolver]) => {
-          const nameMatch = path.match(/\.\/apps\/([^/]+)\/App\.jsx$/);
-          if (!nameMatch) return null;
-          const name = nameMatch[1];
-          const module = await resolver();
-          const icon = icons[`./apps/${name}/icon.png`]?.default;
-
-          return {
-            name,
-            Component: module.default,
-            icon,
-          };
-        })
-      );
-
-      setLoadedApps(entries.filter(Boolean));
-    };
-
-    loadApps();
-  }, []);
-
   return (
     <>
-      {loadedApps.map((app) => (
+      {appRegistry.map((app) => (
         <div
           key={app.name}
           className="app-icon"
