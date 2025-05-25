@@ -1,8 +1,9 @@
+// src/AppLoader.jsx
 import React from 'react';
 import NotesApp from './apps/Notes/App.jsx';
 import notesIcon from './apps/Notes/icon.png';
 
-// Define and export your registry here
+// Registry of available apps, each with preferred sizing
 export const appRegistry = [
   {
     name: 'Notes',
@@ -13,18 +14,18 @@ export const appRegistry = [
     minWidth: 300,
     minHeight: 200,
   },
-  // …add other apps here
+  // …add more apps here
 ];
 
 export default function AppLoader({ onAppClick }) {
   return (
     <>
-      {appRegistry.map(app => (
+      {appRegistry.map((app) => (
         <div
           key={app.name}
           className="app-icon"
           title={app.name}
-          onClick={() => onAppClick(app)}    {/* pass the full object */}
+          onClick={() => onAppClick(app)}
         >
           <img src={app.icon} alt={app.name} />
         </div>
