@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Taskbar.css';
 import AppLoader from './AppLoader';
 
-export default function Taskbar({ onAppClick }) {
+export default function Taskbar({ onAppClick, apps }) {
   const [entered, setEntered] = useState(false);
   const [time, setTime] = useState("");
   const [emoji, setEmoji] = useState("");
@@ -33,8 +33,7 @@ export default function Taskbar({ onAppClick }) {
   return (
     <div className={`taskbar ${entered ? 'entered' : ''}`}>
       <div className="taskbar-apps">
-        {/* forward the full app object */}
-        <AppLoader onAppClick={onAppClick} />
+        <AppLoader onAppClick={onAppClick} apps={apps} />
       </div>
       <div className="taskbar-element clock">{time}</div>
       <div className="taskbar-element emoji-circle">{emoji}</div>

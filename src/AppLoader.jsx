@@ -1,26 +1,12 @@
 // src/AppLoader.jsx
 import React from 'react';
-import NotesApp from './apps/Notes/App.jsx';
-import notesIcon from './apps/Notes/icon.png';
 
-// Registry of available apps, each with preferred sizing
-export const appRegistry = [
-  {
-    name: 'Notes',
-    Component: NotesApp,
-    icon: notesIcon,
-    defaultWidth: 600,
-    defaultHeight: 450,
-    minWidth: 500,
-    minHeight: 400,
-  },
-  // …add more apps here
-];
+// Remove hardcoded appRegistry
 
-export default function AppLoader({ onAppClick }) {
+export default function AppLoader({ onAppClick, apps }) {
   return (
     <>
-      {appRegistry.map((app) => (
+      {apps.map((app) => (
         <div
           key={app.name}
           className="app-icon"

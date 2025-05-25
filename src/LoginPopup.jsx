@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './LoginPopup.css';
-import sha256 from 'crypto-js/sha256';
-import correctHash from './login/auth/verify';
 
 function LoginPopup({ onClose, onSuccess }) {
     const [password, setPassword] = useState('');
@@ -16,12 +14,22 @@ function LoginPopup({ onClose, onSuccess }) {
         setPassword(event.target.value);
     };
 
-    const handleLogin = () => {
-        const hashedPassword = sha256(password).toString();
-        if (hashedPassword === correctHash) {
-            onSuccess();
-        } else {
-            setError('Incorrect password');
+    const handleLogin = async () => {
+        setError('');
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password }),
+                credentials: 'include', // important for cookies
+            });
+            if (res.ok) {
+                onSuccess();
+            } else {
+                setError('Incorrect password');
+            }
+        } catch (e) {
+            setError('Network error');
         }
     };
 

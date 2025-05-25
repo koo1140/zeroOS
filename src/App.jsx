@@ -13,6 +13,7 @@ function App() {
   const [dimmed, setDimmed] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [showDesktop, setShowDesktop] = useState(false);
+  const [apps, setApps] = useState(null);
 
   useEffect(() => {
     if (!showWelcome) {
@@ -28,9 +29,19 @@ function App() {
   }, [showWelcome]);
 
   const handleWelcomeClose = () => setShowWelcome(false);
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
     setShowLogin(false);
-    setShowDesktop(true);
+    // Fetch protected content after login
+    try {
+      const res = await fetch('/api/apps', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setApps(data);
+        setShowDesktop(true);
+      }
+    } catch (e) {
+      // handle error
+    }
   };
 
   // Desktop window state
@@ -122,8 +133,8 @@ function App() {
         <LoginPopup onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />
       )}
 
-      {showDesktop && (
-        <div className="desktop"> {/* ensures windows are clipped inside */}
+      {showDesktop && apps && (
+        <div className="desktop">
           <WindowManager
             windows={windows}
             onClose={closeWindow}
@@ -134,7 +145,7 @@ function App() {
               updateWindowSize(id, w, h, x, y)
             }
           />
-          <Taskbar onAppClick={openApp} />
+          <Taskbar onAppClick={openApp} apps={apps} />
         </div>
       )}
     </div>
