@@ -23,15 +23,20 @@ export default async function handler(req, res) {
       res.status(400).json({ error: 'Missing app name or file' });
       return;
     }
-    const appPath = path.join(process.cwd(), 'apps', name, file);
+    // Sanitize input
+    const safeName = String(name).replace(/[^a-zA-Z0-9_-]/g, '');
+    const safeFile = String(file).replace(/[^a-zA-Z0-9_.-]/g, '');
+    const appPath = path.join(process.cwd(), 'apps', safeName, safeFile);
     try {
       const content = await fs.readFile(appPath);
       // Set content type based on file extension
-      if (file.endsWith('.js')) {
+      if (safeFile.endsWith('.js')) {
         res.setHeader('Content-Type', 'application/javascript');
-      } else if (file.endsWith('.css')) {
+      } else if (safeFile.endsWith('.jsx')) {
+        res.setHeader('Content-Type', 'application/javascript'); // JSX is still JS for browser
+      } else if (safeFile.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
-      } else if (file.endsWith('.json')) {
+      } else if (safeFile.endsWith('.json')) {
         res.setHeader('Content-Type', 'application/json');
       } else {
         res.setHeader('Content-Type', 'application/octet-stream');

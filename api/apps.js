@@ -6,7 +6,7 @@ const appRegistry = [
   {
     name: 'Notes',
     icon: '/api/protected-icon?name=Notes',
-    script: '/api/protected-app?name=Notes&file=App.js',
+    script: '/api/protected-app?name=Notes&file=App.jsx', // <-- fix extension
     defaultWidth: 600,
     defaultHeight: 450,
     minWidth: 500,
