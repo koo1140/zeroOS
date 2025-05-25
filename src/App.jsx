@@ -40,6 +40,11 @@ function App() {
 
   // Open a new app window
   const openApp = (app) => {
+    console.log('openApp got:', app);
+    if (!app || !app.Component) {
+      console.error('❌ openApp was called with an invalid app:', app);
+      return;
+    }
     const id = `${app.name}_${Date.now()}`;
     setWindows(ws => [
       ...ws,
