@@ -34,7 +34,7 @@ export default function Window({
           pos.y
         );
       }}
-      style={{ zIndex }}
+      style={{ zIndex, overflow: 'hidden' }}  // clip children
       disableDragging={isMaximized}
       enableResizing={!isMaximized}
       dragHandleClassName="window-header"
@@ -57,7 +57,9 @@ export default function Window({
           </button>
         </div>
       </div>
-      <div className="window-body">{children}</div>
+      <div className="window-body">
+        {children}
+      </div>
     </Rnd>
   );
 }

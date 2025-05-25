@@ -30,6 +30,7 @@
   background: #fff;
   border: 1px solid #ccc;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  overflow: hidden;  /* ensure the header/body can’t overflow the frame */
 }
 
 /* header you grab to move/resize */
@@ -46,7 +47,7 @@
 
 .window-body {
   flex: 1;
-  overflow: auto;
+  overflow: auto;  /* scroll when content is taller/wider than the body */
   padding: 8px;
 }
 
