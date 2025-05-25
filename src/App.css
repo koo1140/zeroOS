@@ -13,3 +13,48 @@
 .app.dimmed {
   background-color: rgba(0, 0, 0, 0.7);
 }
+.app.dimmed {
+  filter: brightness(0.6);
+}
+
+.desktop {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: move;
+  background: #0078d4;
+  color: white;
+  padding: 4px 8px;
+  user-select: none;
+}
+
+.window-body {
+  flex: 1;
+  overflow: auto;
+  padding: 8px;
+}
+
+.window-header .controls button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 0.9em;
+  margin-left: 4px;
+  cursor: pointer;
+}

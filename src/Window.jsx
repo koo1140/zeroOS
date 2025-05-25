@@ -1,35 +1,50 @@
-// Window.jsx
+// src/Window.jsx
 import React from 'react';
 import { Rnd } from 'react-rnd';
 
-export default function Window(props) {
-  const {
-    id, title, x, y, width, height, zIndex, isMaximized,
-    onFocus, onClose, onMinimize, onMaximize,
-    children
-  } = props;
-
-  // When the window is clicked or dragged, bring it to front
-  const handleMouseDown = () => { onFocus(); };
+export default function Window({
+  x,
+  y,
+  width,
+  height,
+  zIndex,
+  title,
+  isMaximized,
+  onFocus,
+  onClose,
+  onMinimize,
+  onMaximize,
+  onDragStop,
+  onResizeStop,
+  children,
+}) {
+  const handleMouseDown = () => onFocus();
 
   return (
     <Rnd
       size={{ width, height }}
       position={{ x, y }}
+      onDragStart={handleMouseDown}
+      onResizeStart={handleMouseDown}
       onDragStop={(e, d) => {
-        // update position state if needed (not shown here for brevity)
+        handleMouseDown();
+        onDragStop(d.x, d.y);
       }}
-      onResizeStop={(e, direction, ref, delta, pos) => {
-        // update size and position if needed
+      onResizeStop={(e, dir, ref, delta, pos) => {
+        handleMouseDown();
+        onResizeStop(
+          ref.offsetWidth,
+          ref.offsetHeight,
+          pos.x,
+          pos.y
+        );
       }}
       style={{ zIndex }}
       bounds="parent"
-      className="window"
-      dragHandleClassName="window-header"
-      disableDragging={isMaximized} 
+      disableDragging={isMaximized}
       enableResizing={!isMaximized}
-      onDragStart={handleMouseDown}
-      onResizeStart={handleMouseDown}
+      dragHandleClassName="window-header"
+      className="window"
     >
       <div className="window-header" onMouseDown={handleMouseDown}>
         <span className="title">{title}</span>
@@ -39,9 +54,7 @@ export default function Window(props) {
           <button onClick={onClose}>✕</button>
         </div>
       </div>
-      <div className="window-body">
-        {children}
-      </div>
+      <div className="window-body">{children}</div>
     </Rnd>
   );
 }
