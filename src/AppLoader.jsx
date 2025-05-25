@@ -13,7 +13,7 @@ export const appRegistry = [
     minWidth: 300,
     minHeight: 200,
   },
-  // …add other apps here with their own sizes…
+  // …other apps…
 ];
 
 const AppLoader = ({ onAppClick }) => (
@@ -23,7 +23,7 @@ const AppLoader = ({ onAppClick }) => (
         key={app.name}
         className="app-icon"
         title={app.name}
-        onClick={() => onAppClick(app)}
+        onClick={() => onAppClick(app)}   // <-- pass the whole app object
       >
         <img src={app.icon} alt={app.name} />
       </div>
