@@ -5,6 +5,7 @@ import './index.css';
 import WelcomePopup from './WelcomePopup';
 import Taskbar from './Taskbar'; // Import Taskbar component
 import LoginPopup from './LoginPopup'; // Import LoginPopup component
+import Desktop from './Desktop';
 
 function App() {
   const [showPopup, setShowPopup] = useState(true);
@@ -38,9 +39,7 @@ function App() {
     <div className={`app ${dimmed ? 'dimmed' : ''}`}>
       {showPopup && <WelcomePopup onClose={handleClose} />}
       {showLogin && <LoginPopup onClose={() => setShowLogin(false)} onSuccess={handleLoginSuccess} />}
-    + import Desktop from './Desktop';
-  …
-  {showTaskbar && <Desktop />}
+      {showTaskbar && <Desktop />}
     </div>
   );
 }
