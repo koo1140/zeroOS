@@ -11,8 +11,8 @@ export const appRegistry = [
     icon: notesIcon,
     defaultWidth: 600,
     defaultHeight: 450,
-    minWidth: 300,
-    minHeight: 200,
+    minWidth: 500,
+    minHeight: 400,
   },
   // …add more apps here
 ];

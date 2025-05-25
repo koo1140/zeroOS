@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import './index.css';
@@ -41,10 +40,6 @@ function App() {
   // Open a new app window
   const openApp = (app) => {
     console.log('openApp got:', app);
-    if (!app || !app.Component) {
-      console.error('❌ openApp was called with an invalid app:', app);
-      return;
-    }
     const id = `${app.name}_${Date.now()}`;
     setWindows(ws => [
       ...ws,
@@ -66,12 +61,6 @@ function App() {
   // Window controls
   const closeWindow = (id) => {
     setWindows(ws => ws.filter(w => w.id !== id));
-  };
-
-  const minimizeWindow = (id) => {
-    setWindows(ws =>
-      ws.map(w => (w.id === id ? { ...w, isMinimized: true } : w))
-    );
   };
 
   const maximizeWindow = (id) => {
@@ -134,11 +123,10 @@ function App() {
       )}
 
       {showDesktop && (
-        <>
+        <div className="desktop"> {/* ensures windows are clipped inside */}
           <WindowManager
             windows={windows}
             onClose={closeWindow}
-            onMinimize={minimizeWindow}
             onMaximize={maximizeWindow}
             onFocus={focusWindow}
             onDragStop={(id, x, y) => updateWindowPosition(id, x, y)}
@@ -147,7 +135,7 @@ function App() {
             }
           />
           <Taskbar onAppClick={openApp} />
-        </>
+        </div>
       )}
     </div>
   );
