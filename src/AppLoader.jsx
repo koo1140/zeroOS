@@ -5,13 +5,34 @@ import React from 'react';
 
 export default function AppLoader({ onAppClick, apps }) {
   const handleAppClick = async (app) => {
-    // Dynamically import the app script from the protected endpoint
     const scriptUrl = app.script;
     try {
-      const module = await import(/* @vite-ignore */ scriptUrl);
-      onAppClick({ ...app, Component: module.default });
+      // Fetch the script as text
+      const res = await fetch(scriptUrl, { credentials: 'include' });
+      if (!res.ok) throw new Error('Failed to fetch app script');
+      const code = await res.text();
+
+      // Try to import as a blob module (works if code is valid JS)
+      const blob = new Blob([code], { type: 'application/javascript' });
+      const blobUrl = URL.createObjectURL(blob);
+      try {
+        const module = await import(/* @vite-ignore */ blobUrl);
+        onAppClick({ ...app, Component: module.default });
+      } catch (e) {
+        // Fallback: try eval (for demo/dev only, not production safe)
+        // eslint-disable-next-line no-eval
+        let exports = {};
+        eval(code + '\nexports = { default: NotesApp || exports.default };');
+        if (exports.default) {
+          onAppClick({ ...app, Component: exports.default });
+        } else {
+          throw e;
+        }
+      } finally {
+        URL.revokeObjectURL(blobUrl);
+      }
     } catch (e) {
-      alert('Failed to load app: ' + app.name);
+      alert('Failed to load app: ' + app.name + '\n' + e.message);
     }
   };
 
