@@ -98,39 +98,36 @@ function cleanupExpiredKeys() {
 setInterval(cleanupExpiredKeys, 60 * 1000);
 
 export default async function handler(req, res) {
-  // No JWT check here for fetching app list with encrypted content.
-  // Auth will be checked when keys are requested via login.
-  try {
-    const processedAppRegistry = baseAppConfig.map(appConfig => {
-      const keyId = crypto.randomBytes(16).toString('hex');
-      const uniqueSecretKey = generateSecretKey(); // This is the key for AES
-      let htmlContent;
-      try {
-        // Construct absolute path to HTML file
-        // Resolve path relative to the current file's directory (__dirname)
-        const filePath = path.resolve(__dirname, '..', appConfig.htmlPath);
-        htmlContent = fs.readFileSync(filePath, 'utf-8');
-      } catch (err) {
-        console.error(`Failed to read HTML file for ${appConfig.name}: ${appConfig.htmlPath}`, err);
-        // Return a placeholder or skip this app if HTML is missing
-        return {
-          ...appConfig,
-          error: `Failed to load app content for ${appConfig.name}.`
-        };
-      }
-      // Add AES-encrypted HTML to response (optional: encrypt htmlContent)
-      const encryptedHtml = encryptAES(htmlContent, uniqueSecretKey);
-      // Cache the key temporarily for decryption purposes
-      tempKeyCache.set(keyId, { secretKey: uniqueSecretKey, timestamp: Date.now() });
-      return {
-        ...appConfig,
-        keyId,
-        encryptedHtml,
-      };
-    });
-    res.status(200).json({ apps: processedAppRegistry });
-  } catch (error) {
-    console.error('Failed to process app registry:', error);
-    res.status(500).json({ error: 'Failed to fetch apps' });
-  }
+  const basePath = path.resolve('./public/apps');
+
+  const apps = [
+    { name: 'Notes', htmlPath: 'Notes/index.html' },
+    { name: 'Calculator', htmlPath: 'Calculator/index.html' },
+    { name: 'Calendar', htmlPath: 'Calendar/index.html' },
+  ];
+
+  const result = apps.map((app) => {
+    const absPath = path.join(basePath, app.htmlPath);
+
+    let html;
+    try {
+      html = fs.readFileSync(absPath, 'utf-8');
+    } catch {
+      return { ...app, error: 'Failed to load HTML' };
+    }
+
+    const key = crypto.randomBytes(32);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    let encrypted = cipher.update(html, 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+
+    return {
+      ...app,
+      keyId: iv.toString('hex'),
+      encryptedHtml: `${iv.toString('hex')}:${encrypted}`,
+    };
+  });
+
+  res.status(200).json({ apps: result });
 }
