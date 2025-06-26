@@ -45,3 +45,30 @@ export default async function handler(req, res) {
 
   res.status(200).json({ decryptionKeys });
 }
+
+const handleLoginSuccess = async (loginData) => {
+  setShowLogin(false);
+  try {
+    // Always re-fetch apps after login to get a fresh JWT for decryption keys
+    const appsRes = await fetch('/api/apps', { credentials: 'include' });
+    const appsData = await appsRes.json();
+    setApps(appsData.apps);
+
+    const keyIdsToFetch = appsData.apps.map(app => app.keyId).filter(Boolean);
+    if (keyIdsToFetch.length > 0) {
+      const keysRes = await fetch('/api/decryption-keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keyIds: keyIdsToFetch }),
+        credentials: 'include',
+      });
+      const keysData = await keysRes.json();
+      setDecryptionKeysMap(keysData.decryptionKeys || {});
+    } else {
+      setDecryptionKeysMap({});
+    }
+    setShowDesktop(true);
+  } catch (e) {
+    setError('Failed to load application data. Please try again.');
+  }
+};
