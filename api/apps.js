@@ -12,6 +12,24 @@ const appRegistry = [
     minWidth: 500,
     minHeight: 400,
   },
+  {
+    name: 'Calculator',
+    icon: '/api/protected-icon?name=Calculator',
+    script: '/api/protected-app?name=Calculator&file=App.jsx',
+    defaultWidth: 320, // Calculators are usually narrower
+    defaultHeight: 480,
+    minWidth: 280,
+    minHeight: 400,
+  },
+  {
+    name: 'Calendar',
+    icon: '/api/protected-icon?name=Calendar',
+    script: '/api/protected-app?name=Calendar&file=App.jsx',
+    defaultWidth: 380,
+    defaultHeight: 350,
+    minWidth: 300,
+    minHeight: 300,
+  },
   // ...add more apps here
 ];
 

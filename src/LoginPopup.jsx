@@ -2,34 +2,50 @@ import React, { useState, useRef, useEffect } from 'react';
 import './LoginPopup.css';
 
 function LoginPopup({ onClose, onSuccess }) {
+    const [username, setUsername] = useState(''); // Added username state
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const inputRef = useRef(null);
+    const usernameInputRef = useRef(null); // Ref for username input
 
     useEffect(() => {
-        inputRef.current?.focus();
+        usernameInputRef.current?.focus(); // Focus username input on mount
     }, []);
 
-    const handleInputChange = (event) => {
+    const handleUsernameChange = (event) => {
+        setUsername(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
 
     const handleLogin = async () => {
         setError('');
+        if (!username) {
+            setError('Username is required.');
+            return;
+        }
+        if (!password) {
+            setError('Password is required.');
+            return;
+        }
+
         try {
             const res = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
+                // Sending username and password as separate fields
+                body: JSON.stringify({ username, password }),
                 credentials: 'include', // important for cookies
             });
+            const data = await res.json();
             if (res.ok) {
-                onSuccess();
+                onSuccess(data.username); // Pass username on success
             } else {
-                setError('Incorrect password');
+                setError(data.error || 'Login failed');
             }
         } catch (e) {
-            setError('Network error');
+            setError('Network error. Please try again.');
         }
     };
 
@@ -44,11 +60,18 @@ function LoginPopup({ onClose, onSuccess }) {
             <div className="login-popup">
                 <h2>Auth</h2>
                 <input
-                    ref={inputRef}
+                    ref={usernameInputRef} // Assign ref to username input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={handleUsernameChange}
+                    onKeyDown={handleKeyDown} // Allow Enter key on username field
+                />
+                <input
                     type="password"
                     placeholder="Password"
                     value={password}
-                    onChange={handleInputChange}
+                    onChange={handlePasswordChange}
                     onKeyDown={handleKeyDown}
                 />
                 {error && <div className="error-message">{error}</div>}
