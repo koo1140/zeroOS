@@ -8,6 +8,7 @@ export default function Window({
   minWidth, minHeight,
   onFocus, onClose, onMaximize,
   onDragStop, onResizeStop,
+  htmlContent, // Added htmlContent prop
   children
 }) {
   const startDrag = () => onFocus();
@@ -58,7 +59,15 @@ export default function Window({
         </div>
       </div>
       <div className="window-body">
-        {children}
+        {htmlContent ? (
+          <iframe
+            srcDoc={htmlContent}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title={title}
+          />
+        ) : (
+          children
+        )}
       </div>
     </Rnd>
   );
