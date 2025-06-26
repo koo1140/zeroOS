@@ -1,0 +1,61 @@
+/* src/ErrorDisplayModal.css */
+.error-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+.error-modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #333; /* Darker text for readability */
+}
+
+.error-modal-content h2 {
+  margin-top: 0;
+  color: #d32f2f; /* Reddish color for error titles */
+}
+
+.error-modal-content p {
+  margin: 10px 0;
+}
+
+.error-modal-content pre {
+  background-color: #f0f0f0; /* Light grey background for code/details */
+  padding: 10px;
+  border-radius: 4px;
+  white-space: pre-wrap; /* Wrap long lines */
+  word-break: break-all; /* Break long words if necessary */
+  font-family: monospace;
+  max-height: 200px; /* Limit height of preformatted text */
+  overflow-y: auto;
+}
+
+.error-modal-content button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  float: right;
+}
+
+.error-modal-content button:hover {
+  background-color: #0056b3;
+}
