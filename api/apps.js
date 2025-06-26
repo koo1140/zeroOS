@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const JWT_SECRET = process.env.ZEROOS_JWT_SECRET || 'change_this_secret';
-const KEY_EXPIRY_MS = 2 * 60 * 1000; // 2 minutes
+const KEY_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 
 // In-memory cache for temporary decryption keys
 // In a production environment, consider using a more robust cache like Redis
