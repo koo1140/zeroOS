@@ -27,48 +27,65 @@ export default async function handler(req, res) {
     const safeName = String(name).replace(/[^a-zA-Z0-9_-]/g, '');
     let safeFile = String(file).replace(/[^a-zA-Z0-9_.-]/g, '');
 
-    // If a .jsx file is requested, change it to .js as Vite compiles JSX to JS
-    if (safeFile.endsWith('.jsx')) {
-      safeFile = safeFile.replace('.jsx', '.js');
-    }
+    // Sanitize input (already done)
+    // const safeName = String(name).replace(/[^a-zA-Z0-9_-]/g, '');
+    // let safeFile = String(file).replace(/[^a-zA-Z0-9_.-]/g, '');
 
-    // Construct path to the built assets in the 'dist' directory
-    // Apps are expected to be in dist/apps/[AppName]/[FileName]
-    // CSS files are in dist/assets/[AppName]-[hash].css - this will need adjustment
-    // For now, direct JS/CSS requests will assume simple naming.
+    // Construct path to the built app library assets in 'dist/app-libs'
+    // Expected structure: dist/app-libs/[AppName]/[AppName].es.js
+    // Or for CSS: dist/app-libs/[AppName]/[AppName].css
     let appPath;
+
+    // Check if requesting a CSS file for an app library
+    // e.g. /api/protected-app?name=Calculator&file=Calculator.css
     if (safeFile.endsWith('.css')) {
-      // This is a simplified assumption. Vite produces hashed CSS file names in dist/assets.
-      // A more robust solution would involve a manifest file from Vite to map original names to hashed names.
-      // For now, let's try to find a file that starts with App and ends with .css in the app's asset folder.
-      // This is NOT a robust solution.
-      // Example: dist/assets/App-D6bR3a_T.css for Calculator
-      // We need to list files or use a manifest. For now, we'll assume a simplified name or defer proper CSS handling.
-      // Let's assume the client will request the exact hashed filename for CSS if needed,
-      // or the JS bundle will load it.
-      // The current 'file' parameter might be 'App.css'. The actual file is e.g. 'App-D6bR3a_T.css'.
-      // This part is tricky without a manifest file or a more predictable naming scheme for app-specific CSS.
-      // For this step, we will primarily focus on JS.
-      // A simplified approach for CSS: assume it's named App.css in the app's dist folder (if Vite puts it there)
-      // Looking at the build output:
-      // dist/assets/App-D6bR3a_T.css
-      // dist/assets/App-DvAMSrX6.css
-      // dist/assets/App-BiOncaBC.css
-      // These are not directly in dist/apps/[AppName]/
-      // This endpoint might not be the right way to serve these hashed CSS assets.
-      // The HTML that loads the JS should ideally also load the correct hashed CSS.
-      // Let's assume for now `file` will be the *exact* filename like `App-D6bR3a_T.css` and `name` would be `assets`.
-      if (safeName === 'assets') { // A convention: if 'name' is 'assets', 'file' is the direct filename in dist/assets
-        appPath = path.join(process.cwd(), 'dist', 'assets', safeFile);
+      // The library build now produces 'style.css' in each app's folder.
+      // We expect safeFile to be "style.css" and safeName to be the AppName.
+      if (safeFile === `style.css`) {
+        appPath = path.join(process.cwd(), 'dist', 'app-libs', safeName, 'style.css');
       } else {
-        // If specific app CSS is requested like 'apps/Notes/App.css', it's not directly available.
-        // The JS bundle (e.g. dist/apps/Notes/App.js) will import its CSS.
-        // For now, if a .css file is requested for an app, we'll return 404 as it's not directly there.
-        res.status(404).json({ error: `CSS files are bundled. Request specific asset from /assets/ or ensure JS handles CSS import.` });
-        return;
+        // If a generic assets file is requested (e.g. from main dist/assets)
+        // This condition might need to be more specific if apps can request general assets too.
+        if (safeName === 'assets') {
+            appPath = path.join(process.cwd(), 'dist', 'assets', safeFile);
+        } else {
+            res.status(400).json({ error: 'Invalid CSS file request for app. Expected style.css with app name.' });
+            return;
+        }
       }
-    } else {
-      appPath = path.join(process.cwd(), 'dist', 'apps', safeName, safeFile);
+    }
+    // Check if requesting a JS file for an app library
+    // e.g. /api/protected-app?name=Calculator&file=Calculator.es.js
+    else if (safeFile.endsWith('.es.js')) {
+        // We expect safeFile to be like "Calculator.es.js"
+        if (safeFile === `${safeName}.es.js`) {
+            appPath = path.join(process.cwd(), 'dist', 'app-libs', safeName, safeFile);
+        } else {
+            res.status(400).json({ error: 'Invalid JS file request for app.' });
+            return;
+        }
+    }
+    // Handle generic asset requests (e.g. images from public, or main dist/assets)
+    // This part might need more robust routing if assets are in many places.
+    // For now, assume 'name' could be 'assets' for main build assets.
+    else if (safeName === 'assets') {
+        appPath = path.join(process.cwd(), 'dist', 'assets', safeFile);
+    }
+    // Fallback for other file types or if name is not 'assets' but not app lib files
+    else {
+        // This case might need to be refined or disallowed if not serving other types of files
+        // For now, let's assume it might be trying to access something from the old /dist/apps path (which is now gone)
+        // or some other unexpected file.
+        // To be safe, let's restrict to known patterns or return 404.
+        // For instance, if an app's JS tries to load its own assets relative to itself, this needs careful handling.
+        // The library build places assets (like CSS) in the app's lib folder: dist/app-libs/AppName/AppName.css
+        // If an app (e.g. Calculator.es.js) tries to import './image.png', where would that resolve?
+        // Vite's library mode usually handles linked assets by copying them or inlining.
+        // Let's assume for now that only .es.js and .css files for apps are served via this specific app logic.
+        // Other assets should be handled by a static server for `public` or `dist/assets`.
+        // For now, let's assume this endpoint is primarily for app JS and app CSS.
+      res.status(400).json({ error: `Unsupported file type or structure for app: ${safeName}/${safeFile}` });
+      return;
     }
 
     try {
@@ -78,14 +95,17 @@ export default async function handler(req, res) {
         res.setHeader('Content-Type', 'application/javascript');
       } else if (safeFile.endsWith('.css')) {
         res.setHeader('Content-Type', 'text/css');
-      } else if (safeFile.endsWith('.json')) {
+      } else if (safeFile.endsWith('.json')) { // Though not explicitly handled above for apps
         res.setHeader('Content-Type', 'application/json');
       } else {
+        // For other assets like images, if ever served through here.
+        // Mime type detection would be better.
         res.setHeader('Content-Type', 'application/octet-stream');
       }
       res.status(200).send(content);
-    } catch {
-      res.status(404).json({ error: 'File not found' });
+    } catch (e) {
+      // console.error("File not found or error reading:", appPath, e); // Optional server log
+      res.status(404).json({ error: 'File not found for app resource.' });
     }
   } catch {
     res.status(401).json({ error: 'Unauthorized' });

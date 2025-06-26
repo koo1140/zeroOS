@@ -13,12 +13,12 @@ export default function AppLoader({ onAppClick, apps }) {
     try {
 
       // Dynamically import the module
-
       const module = await import(/* @vite-ignore */ scriptUrl);
 
-      const Component = module.default || module[Object.keys(module)[0]]; // Try default, then first named export
+      // Try default export only, as our app components use `export default`
+      const Component = module.default;
 
-      if (!Component) throw new Error('No component found in app module');
+      if (!Component) throw new Error('No component found in app module (module.default was undefined)');
 
       onAppClick({ ...app, Component });
 

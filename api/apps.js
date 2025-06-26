@@ -6,7 +6,9 @@ const appRegistry = [
   {
     name: 'Notes',
     icon: '/api/protected-icon?name=Notes',
-    script: '/api/protected-app?name=Notes&file=App.jsx', // <-- fix extension
+    // Script path will now point to the ES module built by vite.lib.config.js
+    // e.g., served from dist/app-libs/Notes/Notes.es.js
+    script: '/api/protected-app?name=Notes&file=Notes.es.js',
     defaultWidth: 600,
     defaultHeight: 450,
     minWidth: 500,
@@ -15,7 +17,7 @@ const appRegistry = [
   {
     name: 'Calculator',
     icon: '/api/protected-icon?name=Calculator',
-    script: '/api/protected-app?name=Calculator&file=App.jsx',
+    script: '/api/protected-app?name=Calculator&file=Calculator.es.js',
     defaultWidth: 320, // Calculators are usually narrower
     defaultHeight: 480,
     minWidth: 280,
@@ -24,7 +26,7 @@ const appRegistry = [
   {
     name: 'Calendar',
     icon: '/api/protected-icon?name=Calendar',
-    script: '/api/protected-app?name=Calendar&file=App.jsx',
+    script: '/api/protected-app?name=Calendar&file=Calendar.es.js',
     defaultWidth: 380,
     defaultHeight: 350,
     minWidth: 300,
