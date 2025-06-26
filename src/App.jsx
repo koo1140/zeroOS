@@ -17,6 +17,34 @@ function App() {
   const [decryptionKeysMap, setDecryptionKeysMap] = useState({}); // State for decryption keys
   const [error, setError] = useState(''); // Error state for login/data fetching issues
 
+  // Function to fetch encrypted app data on initial load
+  const fetchInitialEncryptedApps = async () => {
+    try {
+      // Fetch the list of apps (which includes encryptedHtml and keyId)
+      // No credentials needed here as per current api/apps.js setup for initial fetch
+      const appsRes = await fetch('/api/apps');
+      if (!appsRes.ok) {
+        throw new Error(`Failed to fetch initial app data: ${appsRes.statusText}`);
+      }
+      const appsData = await appsRes.json();
+      // Assuming appsData is { apps: [...] } based on persistent API behavior
+      if (!appsData || !appsData.apps) {
+        // Or handle as appsData directly if API changes eventually
+        throw new Error('Initial apps data is not in the expected format.');
+      }
+      setApps(appsData.apps); // Access the nested apps array
+      setError(''); // Clear any previous errors
+    } catch (e) {
+      console.error("Error fetching initial encrypted apps:", e);
+      setError('Failed to load initial application configuration. Please try refreshing.');
+      setApps([]); // Set to empty array or handle error appropriately
+    }
+  };
+
+  // useEffect for initial app data load
+  useEffect(() => {
+    fetchInitialEncryptedApps();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   useEffect(() => {
     if (!showWelcome) {
@@ -37,19 +65,24 @@ function App() {
     console.log("Logged in as:", loginData.username);
 
     try {
-      // 1. Fetch the list of apps (which includes encryptedHtml and keyId)
-      const appsRes = await fetch('/api/apps', { credentials: 'include' });
-      if (!appsRes.ok) {
-        throw new Error(`Failed to fetch apps: ${appsRes.statusText}`);
+      // Apps are now pre-loaded by fetchInitialEncryptedApps
+      // Ensure apps are loaded before proceeding
+      if (!apps || apps.length === 0) {
+        // This could happen if initial fetch failed or is still in progress
+        // setError is likely already set by fetchInitialEncryptedApps if it failed.
+        // Or, we might want to retry fetching apps here if they are essential for login success.
+        // For now, assume if apps aren't here, it's an error state.
+        console.error("Login attempted but apps not loaded. Initial fetch might have failed.");
+        setError('Application data not ready. Please wait or refresh.');
+        // Optionally, re-trigger fetchInitialEncryptedApps or specific error handling
+        return; // Stop login process if apps aren't available
       }
-      const appsData = await appsRes.json();
-      setApps(appsData);
 
-      // 2. Extract keyIds from the fetched apps
-      const keyIdsToFetch = appsData.map(app => app.keyId).filter(Boolean);
+      // 1. Extract keyIds from the pre-loaded apps
+      const keyIdsToFetch = apps.map(app => app.keyId).filter(Boolean);
 
       if (keyIdsToFetch.length > 0) {
-        // 3. Fetch the decryption keys for these keyIds
+        // 2. Fetch the decryption keys for these keyIds
         const keysRes = await fetch('/api/decryption-keys', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

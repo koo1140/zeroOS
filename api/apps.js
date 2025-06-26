@@ -8,13 +8,28 @@ import path from 'path';
 
 const JWT_SECRET = process.env.ZEROOS_JWT_SECRET || 'change_this_secret';
 
-const KEY_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const KEY_EXPIRY_MS = 2 * 60 * 1000; // 2 minutes
 
 // In-memory cache for temporary decryption keys
-
 // In a production environment, consider using a more robust cache like Redis
-
 const tempKeyCache = new Map(); // Stores keyId -> { secretKey, timestamp }
+
+// Exported function to retrieve decryption keys
+export function getDecryptionKeys(keyIds) {
+  const keys = {};
+  const now = Date.now();
+  for (const keyId of keyIds) {
+    const cached = tempKeyCache.get(keyId);
+    if (cached && (now - cached.timestamp <= KEY_EXPIRY_MS)) {
+      keys[keyId] = cached.secretKey;
+    } else if (cached) {
+      // Key found but expired
+      tempKeyCache.delete(keyId);
+      console.log(`Attempted to fetch expired keyId: ${keyId}. Key was deleted.`);
+    }
+  }
+  return keys;
+}
 
 // Server-side AES encryption function
 

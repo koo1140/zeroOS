@@ -23,8 +23,9 @@ export default async function handler(req, res) {
   if (user) {
     const match = await bcrypt.compare(password, user.hashedPassword);
     if (match) {
-      const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1d' }); // Store username in token
-      res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=86400`);
+      const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '2h' }); // Token valid for 2 hours
+      // Make it a session cookie by not setting Max-Age or Expires
+      res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; SameSite=Lax`);
       res.status(200).json({ ok: true, username }); // Send username back
     } else {
       res.status(401).json({ error: 'Invalid username or password' });
