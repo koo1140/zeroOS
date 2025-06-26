@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         // Externalize deps that shouldn't be bundled into the library
-        // external: ['react', 'react-dom', 'react/jsx-runtime'], // Temporarily removed for testing
+        external: ['react', 'react-dom', 'react/jsx-runtime'],
         output: {
           // Provide global variables to use in the UMD build
           // for externalized deps
