@@ -5,7 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build:main": "vite build",
+    "build:app:Calculator": "cross-env APP_NAME=Calculator APP_ENTRY_SRC=apps/Calculator/App.jsx vite build --config vite.lib.config.js",
+    "build:app:Notes": "cross-env APP_NAME=Notes APP_ENTRY_SRC=apps/Notes/App.jsx vite build --config vite.lib.config.js",
+    "build:app:Calendar": "cross-env APP_NAME=Calendar APP_ENTRY_SRC=apps/Calendar/App.jsx vite build --config vite.lib.config.js",
+    "build:apps": "npm run build:app:Calculator && npm run build:app:Notes && npm run build:app:Calendar",
+    "build": "npm run build:main && npm run build:apps",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -21,6 +26,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",

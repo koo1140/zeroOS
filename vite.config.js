@@ -2,37 +2,39 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { readdirSync } from 'fs';
+// readdirSync is no longer needed here as app entries are not processed by this config
 
 // https://vite.dev/config/
 
-// Dynamically create input entries for each app in the apps directory
-const appsDir = resolve(__dirname, 'apps');
-const appEntries = readdirSync(appsDir, { withFileTypes: true })
-  .filter(dirent => dirent.isDirectory())
-  .reduce((acc, dirent) => {
-    acc[`apps/${dirent.name}/App`] = resolve(appsDir, dirent.name, 'App.jsx');
-    return acc;
-  }, {});
+// This is the main application shell config.
+// Individual apps are built separately using vite.lib.config.js
 
 export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
       input: {
-        // Main app entry (if you have one, e.g., src/main.jsx)
+        // Main app entry, Vite will find src/main.jsx through index.html
         main: resolve(__dirname, 'index.html'),
-        // Spread the app entries
-        ...appEntries,
       },
       output: {
-        // Ensures that entry files are named consistently (e.g., App.js)
-        // And placed in a directory structure reflecting the input key
-        entryFileNames: `[name].js`,
+        // Standard output settings for the main app
+        entryFileNames: `assets/[name]-[hash].js`, // typical output for vite
         chunkFileNames: `assets/[name]-[hash].js`,
-        assetFileNames: `assets/[name]-[hash].[ext]`
+        assetFileNames: `assets/[name]-[hash].[ext]`,
+        // manualChunks can be defined here for vendor separation for the main app if desired
+        // For example:
+        // manualChunks(id) {
+        //   if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
+        //     return 'vendor-react-main';
+        //   }
+        //   if (id.includes('node_modules')) {
+        //     return 'vendor-main';
+        //   }
+        // }
       }
     },
-    outDir: 'dist', // Default is 'dist', explicitly stating for clarity
+    outDir: 'dist', // Main application shell goes into dist/
+    emptyOutDir: true, // Clean dist before main build (app builds will go to dist/app-libs/*)
   }
 });
