@@ -42,12 +42,18 @@ export default async function handler(req, res) {
     const keyId = iv.toString('hex');
     keyMap[keyId] = key.toString('hex');
 
+    // Debug: log keyId and key
+    console.log(`[apps.js] Generated keyId: ${keyId}, key: ${key.toString('hex')}`);
+
     return {
       ...app,
       keyId,
       encryptedHtml: `${keyId}:${encrypted}`,
     };
   });
+
+  // Debug: log the full keyMap
+  console.log('[apps.js] keyMap for JWT:', keyMap);
 
   // Issue JWT with keyMap, expires in 10 minutes
   const token = jwt.sign({ keyMap }, JWT_SECRET, { expiresIn: '10m' });

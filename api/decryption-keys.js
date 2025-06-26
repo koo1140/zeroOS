@@ -27,6 +27,9 @@ export default async function handler(req, res) {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     keyMap = decoded.keyMap || {};
+    // Debug: log decoded JWT and requested keyIds
+    console.log('[decryption-keys.js] Decoded JWT keyMap:', keyMap);
+    console.log('[decryption-keys.js] Requested keyIds:', keyIds);
   } catch (e) {
     res.status(401).json({ error: 'Invalid or expired decryption key token' });
     return;
