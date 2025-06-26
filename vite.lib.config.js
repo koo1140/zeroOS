@@ -26,15 +26,16 @@ export default defineConfig(({ mode }) => {
         formats: ['es'], // We primarily need ES module format for dynamic import
       },
       rollupOptions: {
-        // No longer externalizing react/react-dom for simplicity with dynamic imports.
-        // Let them be bundled into each app library.
-        // external: ['react', 'react-dom'],
+        // Externalize deps that shouldn't be bundled into the library
+        external: ['react', 'react-dom', 'react/jsx-runtime'],
         output: {
-          // globals are not needed if not externalizing
-          // globals: {
-          //   react: 'React',
-          //   'react-dom': 'ReactDOM',
-          // },
+          // Provide global variables to use in the UMD build
+          // for externalized deps
+          globals: {
+            'react': 'React',
+            'react-dom': 'ReactDOM',
+            'react/jsx-runtime': 'jsxRuntime' // Or however it's typically named
+          },
           assetFileNames: 'style.css',
         },
       },

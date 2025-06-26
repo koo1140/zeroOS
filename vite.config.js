@@ -19,22 +19,18 @@ export default defineConfig({
       },
       output: {
         // Standard output settings for the main app
-        entryFileNames: `assets/[name]-[hash].js`, // typical output for vite
+        entryFileNames: `assets/[name]-[hash].js`,
         chunkFileNames: `assets/[name]-[hash].js`,
         assetFileNames: `assets/[name]-[hash].[ext]`,
-        // manualChunks can be defined here for vendor separation for the main app if desired
-        // For example:
-        // manualChunks(id) {
-        //   if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/')) {
-        //     return 'vendor-react-main';
-        //   }
-        //   if (id.includes('node_modules')) {
-        //     return 'vendor-main';
-        //   }
-        // }
+        manualChunks(id) {
+          if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react/jsx-runtime')) {
+            return 'vendor-react'; // Create a stable chunk name for React + ReactDOM + JSX runtime
+          }
+        }
       }
     },
-    outDir: 'dist', // Main application shell goes into dist/
-    emptyOutDir: true, // Clean dist before main build (app builds will go to dist/app-libs/*)
+    manifest: true, // Generate manifest.json
+    outDir: 'dist',
+    emptyOutDir: true,
   }
 });
