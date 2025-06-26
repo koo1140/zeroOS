@@ -9,14 +9,15 @@
       IMPORTANT: The paths in this importmap, especially for vendor-react.js,
       will need to be updated with the correct hashed filenames after each 'npm run build:main'.
       Check dist/manifest.json for the actual filenames.
+      MODIFIED: Using a fixed filename for vendor-react.js to avoid manual updates.
     -->
     <script type="importmap">
     {
       "imports": {
-        "react": "./assets/vendor-react-BhV3j-LA.js",
-        "react-dom": "./assets/vendor-react-BhV3j-LA.js",
-        "react-dom/client": "./assets/vendor-react-BhV3j-LA.js",
-        "react/jsx-runtime": "./assets/vendor-react-BhV3j-LA.js"
+        "react": "./assets/vendor-react.js",
+        "react-dom": "./assets/vendor-react.js",
+        "react-dom/client": "./assets/vendor-react.js",
+        "react/jsx-runtime": "./assets/vendor-react.js"
       }
     }
     </script>
