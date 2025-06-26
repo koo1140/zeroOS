@@ -109,19 +109,23 @@ function App() {
   const [windows, setWindows] = useState([]);
   const [zCounter, setZCounter] = useState(1);
 
+  // Responsive: set smaller default/min sizes for mobile
+  const isMobile = window.innerWidth <= 600;
+
   // Open a new app window
   const openApp = (app) => {
-    console.log('openApp got:', app);
     const id = `${app.name}_${Date.now()}`;
     setWindows(ws => [
       ...ws,
       {
         id,
         ...app,
-        x: 100,
-        y: 100,
-        width: app.defaultWidth,
-        height: app.defaultHeight,
+        x: isMobile ? 10 : 100,
+        y: isMobile ? 10 : 100,
+        width: isMobile ? Math.min(window.innerWidth - 20, 340) : (app.defaultWidth || 320),
+        height: isMobile ? Math.min(window.innerHeight - 80, 420) : (app.defaultHeight || 400),
+        minWidth: isMobile ? 180 : (app.minWidth || 180),
+        minHeight: isMobile ? 120 : (app.minHeight || 120),
         zIndex: zCounter,
         isMinimized: false,
         isMaximized: false,

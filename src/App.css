@@ -108,3 +108,25 @@
   background: #e81123;
   color: #fff;
 }
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .window {
+    min-width: 160px !important;
+    min-height: 100px !important;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+  .window-header {
+    padding: 4px 8px;
+    font-size: 0.8em;
+  }
+  .window-body {
+    padding: 2px !important;
+    font-size: 0.8rem;
+  }
+  .controls button {
+    font-size: 0.9em;
+    padding: 2px 6px;
+  }
+}

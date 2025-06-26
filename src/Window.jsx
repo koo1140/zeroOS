@@ -58,12 +58,13 @@ export default function Window({
           </button>
         </div>
       </div>
-      <div className="window-body">
+      <div className="window-body" style={{ padding: isMobile() ? 2 : 16 }}>
         {htmlContent ? (
           <iframe
             srcDoc={htmlContent}
-            style={{ width: '100%', height: '100%', border: 'none' }}
+            style={{ width: '100%', height: '100%', border: 'none', minHeight: 0, minWidth: 0 }}
             title={title}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
         ) : (
           children
@@ -71,4 +72,9 @@ export default function Window({
       </div>
     </Rnd>
   );
+}
+
+// Helper for mobile detection
+function isMobile() {
+  return typeof window !== 'undefined' && window.innerWidth <= 600;
 }
