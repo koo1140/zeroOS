@@ -6,21 +6,23 @@ const Desktop = () => {
   const [windows, setWindows] = useState([]);
   const [zIndexCounter, setZIndexCounter] = useState(1);
 
-  const openApp = (appName, Component) => {
-    const id = `${appName}_${Date.now()}`;
+  const openApp = (appWithHtml) => {
+    const id = `${appWithHtml.name}_${Date.now()}`;
     setWindows(prev => [
       ...prev,
       {
         id,
-        name: appName,
-        x: 100,
-        y: 100,
-        width: 400,
-        height: 300,
+        name: appWithHtml.name,
+        x: appWithHtml.defaultX || 100,
+        y: appWithHtml.defaultY || 100,
+        width: appWithHtml.defaultWidth || 400,
+        height: appWithHtml.defaultHeight || 300,
+        minWidth: appWithHtml.minWidth || 200,
+        minHeight: appWithHtml.minHeight || 150,
         zIndex: zIndexCounter,
         isMinimized: false,
         isMaximized: false,
-        Component,
+        htmlContent: appWithHtml.htmlContent, // Store HTML content
       },
     ]);
     setZIndexCounter(prev => prev + 1);
