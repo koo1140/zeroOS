@@ -65,21 +65,19 @@ function App() {
     console.log("Logged in as:", loginData.username);
 
     try {
-      // Apps are now pre-loaded by fetchInitialEncryptedApps
-      // Ensure apps are loaded before proceeding
-      if (!apps || apps.length === 0) {
-        // This could happen if initial fetch failed or is still in progress
-        // setError is likely already set by fetchInitialEncryptedApps if it failed.
-        // Or, we might want to retry fetching apps here if they are essential for login success.
-        // For now, assume if apps aren't here, it's an error state.
-        console.error("Login attempted but apps not loaded. Initial fetch might have failed.");
-        setError('Application data not ready. Please wait or refresh.');
-        // Optionally, re-trigger fetchInitialEncryptedApps or specific error handling
-        return; // Stop login process if apps aren't available
+      // Always re-fetch apps after login to get a fresh JWT for decryption keys
+      const appsRes = await fetch('/api/apps', { credentials: 'include' });
+      if (!appsRes.ok) {
+        throw new Error(`Failed to fetch app data after login: ${appsRes.statusText}`);
       }
+      const appsData = await appsRes.json();
+      if (!appsData || !appsData.apps) {
+        throw new Error('Apps data is not in the expected format after login.');
+      }
+      setApps(appsData.apps);
 
-      // 1. Extract keyIds from the pre-loaded apps
-      const keyIdsToFetch = apps.map(app => app.keyId).filter(Boolean);
+      // 1. Extract keyIds from the freshly loaded apps
+      const keyIdsToFetch = appsData.apps.map(app => app.keyId).filter(Boolean);
 
       if (keyIdsToFetch.length > 0) {
         // 2. Fetch the decryption keys for these keyIds
@@ -103,8 +101,7 @@ function App() {
 
     } catch (e) {
       console.error("Error after login (fetching apps or keys):", e);
-      // Handle error appropriately, e.g., show error message to user
-      setError('Failed to load application data. Please try again.'); // Assuming setError state exists or is added
+      setError('Failed to load application data. Please try again.');
     }
   };
 
