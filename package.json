@@ -6,11 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:main": "vite build",
-    "build:app:Calculator": "cross-env APP_NAME=Calculator APP_ENTRY_SRC=apps/Calculator/App.jsx vite build --config vite.lib.config.js",
-    "build:app:Notes": "cross-env APP_NAME=Notes APP_ENTRY_SRC=apps/Notes/App.jsx vite build --config vite.lib.config.js",
-    "build:app:Calendar": "cross-env APP_NAME=Calendar APP_ENTRY_SRC=apps/Calendar/App.jsx vite build --config vite.lib.config.js",
-    "build:apps": "npm run build:app:Calculator && npm run build:app:Notes && npm run build:app:Calendar",
-    "build": "npm run build:main && npm run build:apps",
+    "build": "npm run build:main",
     "lint": "eslint .",
     "preview": "vite preview"
   },
