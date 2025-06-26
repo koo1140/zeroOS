@@ -2,28 +2,49 @@
 
 import React from 'react';
 
-// Remove hardcoded appRegistry
+import { decryptAES } from '../utils/cryptoUtils.js'; // Import the decryption utility
 
-export default function AppLoader({ onAppClick, apps }) {
+export default function AppLoader({ onAppClick, apps, decryptionKeysMap }) {
 
   const handleAppClick = async (app) => {
 
-    const htmlUrl = app.html; // Assuming app.html contains the path to the HTML file
+    if (!app.encryptedHtml || !app.keyId) {
+
+      alert(`App data is incomplete for ${app.name}. Cannot open.`);
+
+      return;
+
+    }
+
+    const secretKey = decryptionKeysMap && decryptionKeysMap[app.keyId];
+
+    if (!secretKey) {
+
+      alert(`Decryption key not found for ${app.name}. The app might have expired or there was an issue loading keys. Please try logging out and back in.`);
+
+      return;
+
+    }
 
     try {
 
-      // Fetch the HTML content
-      const response = await fetch(htmlUrl);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch HTML: ${response.statusText}`);
-      }
-      const htmlContent = await response.text();
+      const decryptedHtml = decryptAES(app.encryptedHtml, secretKey);
 
-      onAppClick({ ...app, htmlContent });
+      if (decryptedHtml === null) {
+
+        throw new Error('Decryption failed. The content might be corrupted or the key is incorrect.');
+
+      }
+
+      // Successfully decrypted, pass htmlContent to onAppClick
+
+      onAppClick({ ...app, htmlContent: decryptedHtml });
 
     } catch (e) {
 
-      alert('Failed to load app: ' + app.name + '\n' + e.message);
+      console.error('Failed to load or decrypt app:', app.name, e);
+
+      alert(`Failed to load app: ${app.name}\n${e.message}`);
 
     }
 

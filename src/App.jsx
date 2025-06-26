@@ -14,6 +14,9 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showDesktop, setShowDesktop] = useState(false);
   const [apps, setApps] = useState(null);
+  const [decryptionKeysMap, setDecryptionKeysMap] = useState({}); // State for decryption keys
+  const [error, setError] = useState(''); // Error state for login/data fetching issues
+
 
   useEffect(() => {
     if (!showWelcome) {
@@ -29,20 +32,46 @@ function App() {
   }, [showWelcome]);
 
   const handleWelcomeClose = () => setShowWelcome(false);
-  const handleLoginSuccess = async (username) => { // Added username parameter
+  const handleLoginSuccess = async (loginData) => { // loginData from LoginPopup
     setShowLogin(false);
-    // Fetch protected content after login
-    // TODO: Potentially use the username for a personalized welcome or other features
-    console.log("Logged in as:", username);
+    console.log("Logged in as:", loginData.username);
+
     try {
-      const res = await fetch('/api/apps', { credentials: 'include' });
-      if (res.ok) {
-        const data = await res.json();
-        setApps(data);
-        setShowDesktop(true);
+      // 1. Fetch the list of apps (which includes encryptedHtml and keyId)
+      const appsRes = await fetch('/api/apps', { credentials: 'include' });
+      if (!appsRes.ok) {
+        throw new Error(`Failed to fetch apps: ${appsRes.statusText}`);
       }
+      const appsData = await appsRes.json();
+      setApps(appsData);
+
+      // 2. Extract keyIds from the fetched apps
+      const keyIdsToFetch = appsData.map(app => app.keyId).filter(Boolean);
+
+      if (keyIdsToFetch.length > 0) {
+        // 3. Fetch the decryption keys for these keyIds
+        const keysRes = await fetch('/api/decryption-keys', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keyIds: keyIdsToFetch }),
+          credentials: 'include', // Important for sending JWT cookie
+        });
+
+        if (!keysRes.ok) {
+          throw new Error(`Failed to fetch decryption keys: ${keysRes.statusText}`);
+        }
+        const keysData = await keysRes.json();
+        setDecryptionKeysMap(keysData.decryptionKeys || {});
+      } else {
+        setDecryptionKeysMap({}); // No keys to fetch
+      }
+
+      setShowDesktop(true); // Show desktop after apps and keys are processed
+
     } catch (e) {
-      // handle error
+      console.error("Error after login (fetching apps or keys):", e);
+      // Handle error appropriately, e.g., show error message to user
+      setError('Failed to load application data. Please try again.'); // Assuming setError state exists or is added
     }
   };
 
@@ -147,9 +176,10 @@ function App() {
               updateWindowSize(id, w, h, x, y)
             }
           />
-          <Taskbar onAppClick={openApp} apps={apps} />
+          <Taskbar onAppClick={openApp} apps={apps} decryptionKeysMap={decryptionKeysMap} />
         </div>
       )}
+      {error && <div className="app-error-popup">{error}</div> /* Display global errors */}
     </div>
   );
 }

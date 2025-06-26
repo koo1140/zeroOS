@@ -40,7 +40,7 @@ function LoginPopup({ onClose, onSuccess }) {
             });
             const data = await res.json();
             if (res.ok) {
-                onSuccess(data.username); // Pass username on success
+                onSuccess(data); // Pass full data object on success
             } else {
                 setError(data.error || 'Login failed');
             }
