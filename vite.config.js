@@ -20,11 +20,16 @@ export default defineConfig({
       output: {
         // Standard output settings for the main app
         entryFileNames: `assets/[name]-[hash].js`,
-        chunkFileNames: `assets/[name]-[hash].js`,
+        chunkFileNames: (chunkInfo) => {
+          if (chunkInfo.name === 'vendor-react') {
+            return `assets/vendor-react.js`; // Fixed name, no hash
+          }
+          return `assets/[name]-[hash].js`; // Default for other chunks
+        },
         assetFileNames: `assets/[name]-[hash].[ext]`,
         manualChunks(id) {
           if (id.includes('node_modules/react/') || id.includes('node_modules/react-dom/') || id.includes('node_modules/react/jsx-runtime')) {
-            return 'vendor-react'; // Create a stable chunk name for React + ReactDOM + JSX runtime
+            return 'vendor-react';
           }
         }
       }
