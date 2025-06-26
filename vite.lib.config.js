@@ -27,15 +27,15 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         // Externalize deps that shouldn't be bundled into the library
-        external: ['react', 'react-dom', 'react/jsx-runtime'],
+        // external: ['react', 'react-dom', 'react/jsx-runtime'], // Temporarily removed for testing
         output: {
           // Provide global variables to use in the UMD build
           // for externalized deps
-          globals: {
-            'react': 'React',
-            'react-dom': 'ReactDOM',
-            'react/jsx-runtime': 'jsxRuntime' // Or however it's typically named
-          },
+          // globals: {
+          //   'react': 'React',
+          //   'react-dom': 'ReactDOM',
+          //   'react/jsx-runtime': 'jsxRuntime' // Or however it's typically named
+          // },
           assetFileNames: 'style.css',
         },
       },
