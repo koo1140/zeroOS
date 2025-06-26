@@ -41,8 +41,12 @@ export default function Window({
       dragHandleClassName="window-header"
       className="window"
     >
-      <div className="window-header" onMouseDown={startDrag}>
-        <span className="title">{title}</span>
+      <div
+        className="window-header"
+        onMouseDown={startDrag}
+        style={{ height: isMobile() ? '48px' : '32px', display: 'flex', alignItems: 'center' }} // Increased height for mobile
+      >
+        <span className="title" style={{ flexGrow: 1 }}>{title}</span>
         <div className="controls">
           <button
             className="toggle-btn"
@@ -79,6 +83,20 @@ export default function Window({
           children
         )}
       </div>
+      {!isMaximized && isMobile() && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: '20px',
+            height: '20px',
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            cursor: 'se-resize',
+            zIndex: 1, // Ensure it's above the window body but below other controls if any
+          }}
+        />
+      )}
     </Rnd>
   );
 }
