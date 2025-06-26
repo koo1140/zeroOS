@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { decryptAES } from '../utils/cryptoUtils.js'; // Import the decryption utility
+import { decryptAES } from './utils/cryptoUtils.js'; // Import the decryption utility
 
 export default function AppLoader({ onAppClick, apps, decryptionKeysMap }) {
 
