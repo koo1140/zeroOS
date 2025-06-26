@@ -8,19 +8,18 @@ export default function AppLoader({ onAppClick, apps }) {
 
   const handleAppClick = async (app) => {
 
-    const scriptUrl = app.script;
+    const htmlUrl = app.html; // Assuming app.html contains the path to the HTML file
 
     try {
 
-      // Dynamically import the module
-      const module = await import(/* @vite-ignore */ scriptUrl);
+      // Fetch the HTML content
+      const response = await fetch(htmlUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch HTML: ${response.statusText}`);
+      }
+      const htmlContent = await response.text();
 
-      // Try default export only, as our app components use `export default`
-      const Component = module.default;
-
-      if (!Component) throw new Error('No component found in app module (module.default was undefined)');
-
-      onAppClick({ ...app, Component });
+      onAppClick({ ...app, htmlContent });
 
     } catch (e) {
 
