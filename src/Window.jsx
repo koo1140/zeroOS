@@ -58,7 +58,16 @@ export default function Window({
           </button>
         </div>
       </div>
-      <div className="window-body" style={{ padding: isMobile() ? 2 : 16, height: '100%', width: '100%' }}>
+      <div className="window-body" style={{
+        padding: isMobile() ? 2 : 16,
+        height: 'calc(100% - 40px)', // subtract header height, ensures fills window
+        width: '100%',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+        minWidth: 0
+      }}>
         {htmlContent ? (
           <iframe
             srcDoc={htmlContent}
