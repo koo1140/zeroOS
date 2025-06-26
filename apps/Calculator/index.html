@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        .calculator {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+          background-color: #202020; /* Dark background for the calculator body */
+          color: white;
+          font-family: 'Dosis', sans-serif;
+          box-sizing: border-box;
+        }
+
+        .display {
+          background-color: #1a1a1a; /* Even darker for display */
+          color: white;
+          font-size: 2.5em;
+          padding: 20px;
+          text-align: right;
+          flex: 1;
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-end;
+          overflow: hidden;
+          word-break: break-all;
+          border-top-left-radius: 10px; /* Match window border radius if applicable */
+          border-top-right-radius: 10px;
+        }
+
+        .keypad {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-gap: 1px; /* Creates thin lines between buttons */
+          background-color: #1a1a1a; /* Grid background for gaps */
+          padding: 1px; /* Padding to ensure gap visibility around edges */
+        }
+
+        .keypad button {
+          background-color: #333333; /* Dark gray for buttons */
+          color: white;
+          border: none;
+          font-size: 1.5em;
+          padding: 20px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .keypad button:hover {
+          background-color: #444444; /* Lighter gray on hover */
+        }
+
+        .keypad button:active {
+          background-color: #555555; /* Even lighter when active */
+        }
+
+        /* Spanning buttons */
+        .keypad .equals {
+          grid-row: span 2; /* Make equals button taller */
+          background-color: #007bff; /* Blue for equals */
+        }
+        .keypad .equals:hover {
+          background-color: #0056b3;
+        }
+
+        .keypad .zero {
+          grid-column: span 2; /* Make zero button wider */
+        }
+
+        .keypad .clear {
+            background-color: #ff4d4d; /* Reddish for clear */
+        }
+        .keypad .clear:hover {
+            background-color: #cc0000;
+        }
+
+        /* Operator buttons styling */
+        .keypad button:nth-child(1), /* Divide */
+        .keypad button:nth-child(2), /* Multiply */
+        .keypad button:nth-child(3), /* Subtract */
+        .keypad button:nth-child(4) { /* Add */
+          background-color: #4a4a4a; /* Slightly different shade for operators */
+        }
+        .keypad button:nth-child(1):hover,
+        .keypad button:nth-child(2):hover,
+        .keypad button:nth-child(3):hover,
+        .keypad button:nth-child(4):hover {
+          background-color: #5a5a5a;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="calculator">
+            <div class="display" id="display">0</div>
+            <div class="keypad">
+                <button id="op-divide">÷</button>
+                <button id="op-multiply">×</button>
+                <button id="op-subtract">−</button>
+                <button id="op-add">+</button>
+
+                <button id="digit-7">7</button>
+                <button id="digit-8">8</button>
+                <button id="digit-9">9</button>
+                <button id="equals" class="equals">=</button>
+
+                <button id="digit-4">4</button>
+                <button id="digit-5">5</button>
+                <button id="digit-6">6</button>
+
+                <button id="digit-1">1</button>
+                <button id="digit-2">2</button>
+                <button id="digit-3">3</button>
+
+                <button id="digit-0" class="zero">0</button>
+                <button id="decimal">.</button>
+                <button id="clear" class="clear">C</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const displayElement = document.getElementById('display');
+            let displayValue = '0';
+            let currentValue = null;
+            let operator = null;
+            let waitingForOperand = false;
+
+            function updateDisplay() {
+                displayElement.textContent = displayValue;
+            }
+
+            function inputDigit(digit) {
+                if (waitingForOperand) {
+                    displayValue = String(digit);
+                    waitingForOperand = false;
+                } else {
+                    displayValue = displayValue === '0' ? String(digit) : displayValue + digit;
+                }
+                updateDisplay();
+            }
+
+            function inputDecimal() {
+                if (waitingForOperand) {
+                    displayValue = '0.';
+                    waitingForOperand = false;
+                    updateDisplay();
+                    return;
+                }
+                if (!displayValue.includes('.')) {
+                    displayValue = displayValue + '.';
+                    updateDisplay();
+                }
+            }
+
+            function clearDisplay() {
+                displayValue = '0';
+                currentValue = null;
+                operator = null;
+                waitingForOperand = false;
+                updateDisplay();
+            }
+
+            function performOperation(nextOperator) {
+                const inputValue = parseFloat(displayValue);
+
+                if (currentValue == null) {
+                    currentValue = inputValue;
+                } else if (operator) {
+                    const result = calculate(currentValue, inputValue, operator);
+                    currentValue = result;
+                    displayValue = String(result);
+                }
+
+                waitingForOperand = true;
+                operator = nextOperator;
+                updateDisplay();
+            }
+
+            function calculate(prevValue, nextValue, op) {
+                switch (op) {
+                    case '+':
+                        return prevValue + nextValue;
+                    case '-':
+                        return prevValue - nextValue;
+                    case '*':
+                        return prevValue * nextValue;
+                    case '/':
+                        // Handle division by zero, though simple calculators might show Error or Infinity
+                        if (nextValue === 0) return 'Error';
+                        return prevValue / nextValue;
+                    default:
+                        return nextValue;
+                }
+            }
+
+            function handleEquals() {
+                const inputValue = parseFloat(displayValue);
+                if (currentValue != null && operator) {
+                    const result = calculate(currentValue, inputValue, operator);
+                    currentValue = result;
+                    displayValue = String(result);
+                    operator = null;
+                    waitingForOperand = true;
+                    updateDisplay();
+                }
+            }
+
+            // Event Listeners
+            document.getElementById('digit-0').addEventListener('click', () => inputDigit(0));
+            document.getElementById('digit-1').addEventListener('click', () => inputDigit(1));
+            document.getElementById('digit-2').addEventListener('click', () => inputDigit(2));
+            document.getElementById('digit-3').addEventListener('click', () => inputDigit(3));
+            document.getElementById('digit-4').addEventListener('click', () => inputDigit(4));
+            document.getElementById('digit-5').addEventListener('click', () => inputDigit(5));
+            document.getElementById('digit-6').addEventListener('click', () => inputDigit(6));
+            document.getElementById('digit-7').addEventListener('click', () => inputDigit(7));
+            document.getElementById('digit-8').addEventListener('click', () => inputDigit(8));
+            document.getElementById('digit-9').addEventListener('click', () => inputDigit(9));
+
+            document.getElementById('decimal').addEventListener('click', inputDecimal);
+            document.getElementById('clear').addEventListener('click', clearDisplay);
+            document.getElementById('equals').addEventListener('click', handleEquals);
+
+            document.getElementById('op-add').addEventListener('click', () => performOperation('+'));
+            document.getElementById('op-subtract').addEventListener('click', () => performOperation('-'));
+            document.getElementById('op-multiply').addEventListener('click', () => performOperation('*'));
+            document.getElementById('op-divide').addEventListener('click', () => performOperation('/'));
+
+            clearDisplay(); // Initialize display
+        });
+    </script>
+</body>
+</html>

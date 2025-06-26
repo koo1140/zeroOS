@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <style>
+        /* src/apps/Notes/App.css */
+        .notes-app {
+          padding: 20px;
+          font-family: 'Dosis', sans-serif;
+          background-color: #fff;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+          margin: auto;
+          color: #333; /* Added for better text visibility on white background */
+        }
+
+        .notes-app h2 {
+          text-align: center;
+          color: #333; /* Ensure heading is visible */
+        }
+
+        .notes-app textarea {
+          width: 100%;
+          box-sizing: border-box; /* Ensure padding doesn't make it overflow */
+          height: 80px;
+          padding: 10px;
+          font-size: 16px;
+          border-radius: 8px;
+          border: 1px solid #ccc;
+          resize: none;
+          margin-bottom: 10px;
+        }
+
+        .notes-app button {
+          display: block;
+          margin: 0 auto 20px;
+          padding: 8px 16px;
+          background-color: #4f46e5;
+          color: white;
+          font-weight: bold;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.2s ease-in-out;
+        }
+
+        .notes-app button:hover {
+          background-color: #3730a3;
+        }
+
+        .notes-list {
+          list-style-type: none;
+          padding: 0;
+        }
+
+        .notes-list li {
+          background: #f3f4f6;
+          padding: 8px;
+          margin-bottom: 6px;
+          border-radius: 6px;
+          color: #333; /* Ensure note text is visible */
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="notes-app">
+            <h2>📝 Notes</h2>
+            <textarea id="note-text" placeholder="Write your note here..."></textarea>
+            <button id="add-note-button">Add Note</button>
+            <ul class="notes-list" id="notes-list-ul">
+                <!-- Notes will be added here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesListUL = document.getElementById('notes-list-ul');
+            const noteTextInput = document.getElementById('note-text');
+            const addNoteButton = document.getElementById('add-note-button');
+
+            let notes = [];
+
+            function renderNotes() {
+                notesListUL.innerHTML = ''; // Clear existing notes
+                notes.forEach((noteText, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = noteText;
+                    // Optionally, add a key or id if needed for deletion later, e.g., listItem.dataset.id = index;
+                    notesListUL.appendChild(listItem);
+                });
+            }
+
+            function addNote() {
+                const text = noteTextInput.value.trim();
+                if (text) {
+                    notes.push(text);
+                    noteTextInput.value = ''; // Clear textarea
+                    renderNotes();
+                }
+            }
+
+            addNoteButton.addEventListener('click', addNote);
+
+            // Initial render in case there are stored notes (not implemented here, but good practice)
+            renderNotes();
+        });
+    </script>
+</body>
+</html>
