@@ -5,6 +5,21 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZERO OS</title>
+    <!--
+      IMPORTANT: The paths in this importmap, especially for vendor-react.js,
+      will need to be updated with the correct hashed filenames after each 'npm run build:main'.
+      Check dist/manifest.json for the actual filenames.
+    -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "./assets/vendor-react-BhV3j-LA.js",
+        "react-dom": "./assets/vendor-react-BhV3j-LA.js",
+        "react-dom/client": "./assets/vendor-react-BhV3j-LA.js",
+        "react/jsx-runtime": "./assets/vendor-react-BhV3j-LA.js"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
