@@ -29,9 +29,11 @@ function App() {
   }, [showWelcome]);
 
   const handleWelcomeClose = () => setShowWelcome(false);
-  const handleLoginSuccess = async () => {
+  const handleLoginSuccess = async (username) => { // Added username parameter
     setShowLogin(false);
     // Fetch protected content after login
+    // TODO: Potentially use the username for a personalized welcome or other features
+    console.log("Logged in as:", username);
     try {
       const res = await fetch('/api/apps', { credentials: 'include' });
       if (res.ok) {

@@ -1,0 +1,89 @@
+.calculator {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #202020; /* Dark background for the calculator body */
+  color: white;
+  font-family: 'Dosis', sans-serif;
+  box-sizing: border-box;
+}
+
+.display {
+  background-color: #1a1a1a; /* Even darker for display */
+  color: white;
+  font-size: 2.5em;
+  padding: 20px;
+  text-align: right;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  overflow: hidden;
+  word-break: break-all;
+  border-top-left-radius: 10px; /* Match window border radius if applicable */
+  border-top-right-radius: 10px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1px; /* Creates thin lines between buttons */
+  background-color: #1a1a1a; /* Grid background for gaps */
+  padding: 1px; /* Padding to ensure gap visibility around edges */
+}
+
+.keypad button {
+  background-color: #333333; /* Dark gray for buttons */
+  color: white;
+  border: none;
+  font-size: 1.5em;
+  padding: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keypad button:hover {
+  background-color: #444444; /* Lighter gray on hover */
+}
+
+.keypad button:active {
+  background-color: #555555; /* Even lighter when active */
+}
+
+/* Spanning buttons */
+.keypad .equals {
+  grid-row: span 2; /* Make equals button taller */
+  background-color: #007bff; /* Blue for equals */
+}
+.keypad .equals:hover {
+  background-color: #0056b3;
+}
+
+.keypad .zero {
+  grid-column: span 2; /* Make zero button wider */
+}
+
+.keypad .clear {
+    background-color: #ff4d4d; /* Reddish for clear */
+}
+.keypad .clear:hover {
+    background-color: #cc0000;
+}
+
+/* Operator buttons styling */
+.keypad button:nth-child(1), /* Divide */
+.keypad button:nth-child(2), /* Multiply */
+.keypad button:nth-child(3), /* Subtract */
+.keypad button:nth-child(4) { /* Add */
+  background-color: #4a4a4a; /* Slightly different shade for operators */
+}
+.keypad button:nth-child(1):hover,
+.keypad button:nth-child(2):hover,
+.keypad button:nth-child(3):hover,
+.keypad button:nth-child(4):hover {
+  background-color: #5a5a5a;
+}

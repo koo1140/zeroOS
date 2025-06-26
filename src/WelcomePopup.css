@@ -83,16 +83,21 @@
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
+.popup h2 { /* Ensure h2 styling is consistent if used, or adjust if only p is in message-box */
+  margin-bottom: 1.5rem; /* Spacing after title */
+}
+
 .message-box p {
   margin: 0;
   font-size: 1.3rem;
   color: #fff;
   font-weight: 400;
   text-align: left;
+  line-height: 1.6; /* Improve readability */
 }
 
 .popup button {
-  margin-top: 2rem;
+  margin-top: 2.5rem; /* Slightly more top margin */
   padding: 1rem 1rem;
   background-color: #4CAF50;
   color: white;
@@ -102,9 +107,16 @@
   font-size: 1.25rem;
   font-weight: 500;
   font-family: "Dosis", sans-serif;
-  width: 20%;
+  width: 60%; /* Consistent with LoginPopup button */
+  max-width: 300px; /* Consistent with LoginPopup button */
+  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition */
 }
 
 .popup button:hover {
   background-color: #45a049;
+}
+
+.popup button:focus { /* Added focus style */
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5);
 }

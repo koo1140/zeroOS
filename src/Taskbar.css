@@ -143,10 +143,17 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease; /* Added background-color transition */
+  outline: none; /* Remove default outline */
 }
 .app-icon:hover {
   transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.3); /* Slightly lighter on hover */
+}
+.app-icon:focus-visible { /* Style for keyboard focus */
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); /* Focus ring */
 }
 .app-icon img {
   max-width: 80%;
