@@ -35,7 +35,7 @@ export default function Window({
           pos.y
         );
       }}
-      style={{ zIndex, overflow: 'hidden' }}  // clip children
+      style={{ zIndex, overflow: 'hidden', display: 'flex', flexDirection: 'column' }} // make Rnd a flex column
       disableDragging={isMaximized}
       enableResizing={!isMaximized}
       dragHandleClassName="window-header"
@@ -60,18 +60,18 @@ export default function Window({
       </div>
       <div className="window-body" style={{
         padding: isMobile() ? 2 : 16,
-        height: 'calc(100% - 40px)', // subtract header height, ensures fills window
-        width: '100%',
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         minHeight: 0,
-        minWidth: 0
+        minWidth: 0,
+        height: 'auto',
+        width: '100%'
       }}>
         {htmlContent ? (
           <iframe
             srcDoc={htmlContent}
-            style={{ width: '100%', height: '100%', minHeight: 0, minWidth: 0, display: 'block', flex: 1 }}
+            style={{ width: '100%', height: '100%', minHeight: 0, minWidth: 0, display: 'block', flex: 1, border: 'none' }}
             title={title}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
