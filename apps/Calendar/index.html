@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <style>
+        .calendar-app {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          height: 100%;
+          background-color: #282828; /* Dark background for the calendar */
+          color: #e0e0e0;
+          font-family: 'Dosis', sans-serif;
+          box-sizing: border-box;
+          padding: 10px;
+        }
+
+        .calendar-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 5px;
+          margin-bottom: 10px;
+        }
+
+        .calendar-header h2 {
+          margin: 0;
+          font-size: 1.5em;
+          font-weight: 500;
+          text-align: center;
+          flex-grow: 1;
+        }
+
+        .calendar-header button {
+          background: #444;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 35px;
+          height: 35px;
+          font-size: 1.2em;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .calendar-header button:hover {
+          background: #555;
+        }
+
+        .calendar-grid {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 5px; /* Gap between cells */
+          flex-grow: 1;
+        }
+
+        .calendar-day-name,
+        .calendar-day {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+          font-size: 0.9em;
+          min-height: 30px; /* Minimum height for cells */
+        }
+
+        .calendar-day-name {
+          font-weight: 600;
+          color: #aaa;
+          background-color: #333; /* Slightly different background for day names */
+          border-radius: 4px;
+        }
+
+        .calendar-day {
+          background-color: #3a3a3a;
+          border-radius: 4px;
+          transition: background-color 0.2s;
+        }
+
+        .calendar-day:not(.empty):hover {
+          background-color: #4a4a4a;
+          cursor: default;
+        }
+
+        .calendar-day.empty {
+          background-color: transparent;
+          pointer-events: none;
+        }
+
+        .calendar-day.today {
+          background-color: #007bff; /* Blue highlight for today */
+          color: white;
+          font-weight: bold;
+          border: 1px solid #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="calendar-app">
+            <div class="calendar-header">
+                <button id="prev-month">&lt;</button>
+                <h2 id="month-year-header"></h2>
+                <button id="next-month">&gt;</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid-content">
+                <!-- Day names will be prepended here by JS -->
+                <!-- Calendar days will be populated here by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentDate = new Date();
+            const today = new Date();
+
+            const monthYearHeader = document.getElementById('month-year-header');
+            const calendarGridContent = document.getElementById('calendar-grid-content');
+            const prevMonthButton = document.getElementById('prev-month');
+            const nextMonthButton = document.getElementById('next-month');
+
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            function getDaysInMonth(year, month) {
+                return new Date(year, month + 1, 0).getDate();
+            }
+
+            function getFirstDayOfMonth(year, month) {
+                return new Date(year, month, 1).getDay();
+            }
+
+            function renderCalendar() {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                monthYearHeader.textContent = `${monthNames[month]} ${year}`;
+                calendarGridContent.innerHTML = ''; // Clear previous days
+
+                // Add day names
+                daysOfWeek.forEach(dayName => {
+                    const dayNameDiv = document.createElement('div');
+                    dayNameDiv.className = 'calendar-day-name';
+                    dayNameDiv.textContent = dayName;
+                    calendarGridContent.appendChild(dayNameDiv);
+                });
+
+                const daysInMonth = getDaysInMonth(year, month);
+                const firstDay = getFirstDayOfMonth(year, month);
+
+                // Add empty cells for days before the first day of the month
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'calendar-day empty';
+                    calendarGridContent.appendChild(emptyDiv);
+                }
+
+                // Add day cells
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'calendar-day';
+                    dayDiv.textContent = day;
+
+                    if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                        dayDiv.classList.add('today');
+                    }
+                    calendarGridContent.appendChild(dayDiv);
+                }
+            }
+
+            function prevMonth() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            }
+
+            function nextMonth() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            }
+
+            prevMonthButton.addEventListener('click', prevMonth);
+            nextMonthButton.addEventListener('click', nextMonth);
+
+            renderCalendar(); // Initial render
+        });
+    </script>
+</body>
+</html>
