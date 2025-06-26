@@ -58,11 +58,11 @@ export default function Window({
           </button>
         </div>
       </div>
-      <div className="window-body" style={{ padding: isMobile() ? 2 : 16 }}>
+      <div className="window-body" style={{ padding: isMobile() ? 2 : 16, height: '100%', width: '100%' }}>
         {htmlContent ? (
           <iframe
             srcDoc={htmlContent}
-            style={{ width: '100%', height: '100%', border: 'none', minHeight: 0, minWidth: 0 }}
+            style={{ width: '100%', height: '100%', minHeight: 0, minWidth: 0, display: 'block', flex: 1 }}
             title={title}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />
